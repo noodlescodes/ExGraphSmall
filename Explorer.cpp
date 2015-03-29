@@ -58,7 +58,7 @@ namespace VAN_MAASTRICHT {
 			check_valid(matrix);
 		}*/
 		Matrix matrix;
-		for(int i = 0; i < 1; i++) {
+		for(int i = 0; i < 23467; i++) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
 			check_valid(matrix);
@@ -122,6 +122,7 @@ namespace VAN_MAASTRICHT {
 		}
 
 		// now for right child
+		m.set_row(0, m.get_row(0) - depth);
 		err = false;
 		m.set_row(0, m.get_row(0) & RESTOREMASK);
 
@@ -143,7 +144,6 @@ namespace VAN_MAASTRICHT {
 
 		if(err) {
 			m.set_row(0, m.get_row(0) | FAILMASK);
-			cout << "right err" << endl;
 		}
 		
 		m.set_row(0, m.get_row(0) + depth);
