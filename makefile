@@ -1,4 +1,4 @@
-SOURCES=test.cpp Matrix.cpp
+SOURCES=test.cpp Explorer.cpp Matrix.cpp
 EXECUTABLE=test
 CC=g++
 CFLAGS=-Wall -std=c++11

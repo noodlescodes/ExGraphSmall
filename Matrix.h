@@ -1,3 +1,6 @@
+#ifndef VM_MATRIX
+#define VM_MATRIX
+
 #include <cstdlib>
 #include <ostream>
 #include <cstdint>
@@ -32,3 +35,4 @@ namespace VAN_MAASTRICHT {
 	// overloaded operators
 	ostream& operator <<(ostream& outs, const Matrix& mat);
 }
+#endif
