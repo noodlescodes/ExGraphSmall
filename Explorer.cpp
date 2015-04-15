@@ -58,13 +58,14 @@ namespace VAN_MAASTRICHT {
 			check_valid(matrix);
 		}*/
 		Matrix matrix;
-		for(int i = 0; i < 23467; i++) {
+		for(int i = 0; i < 25000000/*23468*/; i++) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
 			check_valid(matrix);
 		}
 
 		cout << dfs_stack.size() << endl;
+		cout << (matrix.get_row(0) & (~((uint32_t) 0) >> (32 - 22))) << endl;
 	}
 
 	void Explorer::check_valid(Matrix &m) {
@@ -84,6 +85,8 @@ namespace VAN_MAASTRICHT {
 		}
 
 		const unsigned int RESTOREMASK = (~FAILMASK) | (FAILMASK & m.get_row(0));
+
+		// cout << m << endl << endl;
 
 		unsigned int depth = (m.get_row(0) & DEPTHMASK);
 		m.set_row(0, m.get_row(0) & (~DEPTHMASK));
@@ -110,7 +113,7 @@ namespace VAN_MAASTRICHT {
 		bool err = false;
 		err |= (edgecount + remainingedges < MINEDGES);
 
-		err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row)));
+		err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE));
 
 		if(err) {
 			m.set_row(0, m.get_row(0) | FAILMASK);
@@ -118,8 +121,10 @@ namespace VAN_MAASTRICHT {
 
 		m.set_row(0, m.get_row(0) + depth);
 		if(m.get_entry(0, 0) == 0) {
+			// cout << '[';
 			dfs_stack.push(m);
 		}
+		// else cout << ']';
 
 		// now for right child
 		m.set_row(0, m.get_row(0) - depth);
@@ -148,7 +153,9 @@ namespace VAN_MAASTRICHT {
 		
 		m.set_row(0, m.get_row(0) + depth);
 		if(m.get_entry(0, 0) == 0) {
+			// cout << '(';
 			dfs_stack.push(m);
 		}
+		// else cout << ')';
 	}
 }
