@@ -1,7 +1,7 @@
-SOURCES=test.cpp Explorer.cpp Matrix.cpp
+SOURCES=test.cpp Explorer.cpp Matrix.cpp Converter.cpp
 EXECUTABLE=test
 CC=g++
-CFLAGS=-Wall -std=c++11
+CFLAGS=-Wall -std=c++11 -O2
 LDFLAGS=
 OBJECTS=$(SOURCES:.cpp=.o)
 
