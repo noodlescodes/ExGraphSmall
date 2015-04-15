@@ -57,9 +57,17 @@ stack<Matrix> stack_from_file(string str) {
 
 int main(int argc, char* argv[]) {
 	Explorer e = Explorer();
+	cout << "Reading from base.txt." << endl;
 	e.read_stack("base.txt");
+	cout << "Starting to explore." << endl;
 	e.explore();
-	e.save_stack("out.txt");
+	//cout << "Saving the stack." << endl;
+	//e.save_stack("out.txt");
+
+	//Converter c = Converter();
+	//cout << "Converting the output file." << endl;
+	//c.bin_to_dec("d56_stack.txt", "d56_stack_dec.txt");
+	//cout << "Fin" << endl;
 
 	/*stack<Matrix> dfs_stack;
 	Matrix m = Matrix();

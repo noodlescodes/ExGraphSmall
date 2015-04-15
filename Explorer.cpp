@@ -76,22 +76,22 @@ namespace VAN_MAASTRICHT {
 		cout << "Elements in stack: " << dfs_stack.size() << endl;
 		cout << "Depth of top element: " << (matrix.get_row(0) & (~((uint32_t) 0) >> (32 - 22))) << endl;*/
 	
-		stack<Matrix> d56_stack;
+		stack<Matrix> d_stack;
 		while(!dfs_stack.empty()) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
-			if(matrix.get_depth() == 5) {
-				d56_stack.push(matrix);
+			if(matrix.get_depth() == 56) {
+				d_stack.push(matrix);
 			}
 			else {
 				check_valid(matrix);
 			}
 		}
-		matrix = d56_stack.top();
+		matrix = d_stack.top();
 		
-		save_stack("d56_stack.txt", d56_stack);
-		cout << "d56_stack saved to \"d56_stack.txt\"" << endl;
-		cout << "Elements in stack: " << d56_stack.size() << endl;
+		//save_stack("d55_stack.txt", d_stack);
+		//cout << "d_stack saved to \"d55_stack.txt\"" << endl;
+		cout << "Elements in stack: " << d_stack.size() << endl;
 		cout << "Depth of top element: " << (matrix.get_depth()) << endl;
 	}
 
