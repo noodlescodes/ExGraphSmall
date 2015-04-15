@@ -18,6 +18,7 @@ namespace VAN_MAASTRICHT {
 		void set_entry(uint32_t i, uint32_t j);
 		void set_row(unsigned int i, uint32_t j);
 		uint32_t get_entry(unsigned int i, unsigned int j);
+		uint32_t get_depth();
 		
 		const unsigned int get_size() const;
 		unsigned int get_size();
@@ -30,6 +31,7 @@ namespace VAN_MAASTRICHT {
 	private:
 		static const unsigned int size = 32;
 		static const uint32_t N = 1 << (size - 1);
+		static const uint32_t DEPTH_MASK = (~((uint32_t) 0) >> (32 - 22));
 		uint32_t mat[size];
 	};
 	// overloaded operators

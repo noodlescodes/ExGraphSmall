@@ -55,6 +55,10 @@ namespace VAN_MAASTRICHT {
 		return (mat[i] & (N >> j)) >> (size - j - 1);
 	}
 
+	uint32_t Matrix::get_depth() {
+		return (mat[0] & DEPTH_MASK);
+	}
+
 	// get the ith row
 	const uint32_t Matrix::get_row(unsigned int i) const {
 		if(i >= size || i < 0) {

@@ -19,6 +19,16 @@ namespace VAN_MAASTRICHT {
 		f.close();
 	}
 
+	void Explorer::save_stack(string str, stack<Matrix> s) {
+		ofstream f;
+		f.open(str, ios::app);
+		while(!s.empty()) {
+			f << s.top() << endl;
+			s.pop();
+		}
+		f.close();
+	}
+
 	void Explorer::read_stack(string str) {
 		uint32_t N = 1 << 31;
 		stack<Matrix> tmp_stack;
@@ -58,14 +68,31 @@ namespace VAN_MAASTRICHT {
 			check_valid(matrix);
 		}*/
 		Matrix matrix;
-		for(int i = 0; i < 25000000/*23468*/; i++) {
+		/*for(int i = 0; i < 25000000; i++) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
 			check_valid(matrix);
 		}
-
-		cout << dfs_stack.size() << endl;
-		cout << (matrix.get_row(0) & (~((uint32_t) 0) >> (32 - 22))) << endl;
+		cout << "Elements in stack: " << dfs_stack.size() << endl;
+		cout << "Depth of top element: " << (matrix.get_row(0) & (~((uint32_t) 0) >> (32 - 22))) << endl;*/
+	
+		stack<Matrix> d56_stack;
+		while(!dfs_stack.empty()) {
+			matrix = dfs_stack.top();
+			dfs_stack.pop();
+			if(matrix.get_depth() == 5) {
+				d56_stack.push(matrix);
+			}
+			else {
+				check_valid(matrix);
+			}
+		}
+		matrix = d56_stack.top();
+		
+		save_stack("d56_stack.txt", d56_stack);
+		cout << "d56_stack saved to \"d56_stack.txt\"" << endl;
+		cout << "Elements in stack: " << d56_stack.size() << endl;
+		cout << "Depth of top element: " << (matrix.get_depth()) << endl;
 	}
 
 	void Explorer::check_valid(Matrix &m) {
@@ -88,7 +115,8 @@ namespace VAN_MAASTRICHT {
 
 		// cout << m << endl << endl;
 
-		unsigned int depth = (m.get_row(0) & DEPTHMASK);
+		//unsigned int depth = (m.get_row(0) & DEPTHMASK);
+		uint32_t depth = m.get_depth();
 		m.set_row(0, m.get_row(0) & (~DEPTHMASK));
 		
 		unsigned int edgecount = m.get_number_edges(); // gives number of edges without double counting
@@ -110,7 +138,7 @@ namespace VAN_MAASTRICHT {
 		++depth;
 
 		// left child
-		bool err = false;
+		/*		bool err = false;
 		err |= (edgecount + remainingedges < MINEDGES);
 
 		err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE));
@@ -125,6 +153,24 @@ namespace VAN_MAASTRICHT {
 			dfs_stack.push(m);
 		}
 		// else cout << ']';
+		*/
+		bool err = false;
+		if(!(edgecount + remainingedges < MINEDGES)) {
+			if(((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE))) {
+				err = true;
+			}
+		}
+		else {
+			err = true;
+		}
+		if(err) {
+			m.set_row(0, m.get_row(0) | FAILMASK);
+		}
+
+		m.set_row(0, m.get_row(0) + depth);
+		if(m.get_entry(0, 0) == 0) {
+			dfs_stack.push(m);
+		}
 
 		// now for right child
 		m.set_row(0, m.get_row(0) - depth);

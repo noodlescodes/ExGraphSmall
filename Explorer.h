@@ -9,6 +9,7 @@ namespace VAN_MAASTRICHT {
 
 		void explore();
 		void save_stack(string str);
+		void save_stack(string str, stack<Matrix> s);
 		void read_stack(string str);
 		void generate_children();
 		

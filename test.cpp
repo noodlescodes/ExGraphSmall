@@ -4,11 +4,10 @@
 #include <bitset>
 #include "Matrix.h"
 #include "Explorer.h"
+#include "Converter.h"
 
 using namespace std;
 using namespace VAN_MAASTRICHT;
-
-unsigned int number_of_solutions = 0;
 
 void stack_to_file(string str, stack<Matrix> dfs_stack) {
 	ofstream f;
@@ -57,36 +56,10 @@ stack<Matrix> stack_from_file(string str) {
 }
 
 int main(int argc, char* argv[]) {
-	/*Matrix m = Matrix();
-	m.set_entry(0,29);
-	m.set_entry(0,31);
-	m.set_entry(2,29);
-	m.set_entry(2,31);
-	
-	stack<Matrix> dfs_stack;
-	dfs_stack.push(m);
-	m.set_entry(0,0);
-	dfs_stack.push(m);
-
-	stack_to_file("test.txt", dfs_stack);
-
-	while(!dfs_stack.empty()) {
-		//cout << dfs_stack.top() << endl << endl;
-		dfs_stack.pop();
-	}
-
-	stack<Matrix> test = stack_from_file("test.txt");
-
-	cout << "test" << endl;
-	while(!test.empty()) {
-		cout << test.top() << endl << endl;
-		test.pop();
-	}*/
-
 	Explorer e = Explorer();
-	e.read_stack("test.txt");
+	e.read_stack("base.txt");
 	e.explore();
-	e.save_stack("test2.txt");
+	e.save_stack("out.txt");
 
 	/*stack<Matrix> dfs_stack;
 	Matrix m = Matrix();
