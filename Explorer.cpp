@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include "Explorer.h"
 
 using namespace std;
@@ -17,6 +18,25 @@ namespace VAN_MAASTRICHT {
 			dfs_stack.pop();
 		}
 		f.close();
+	}
+
+	void Explorer::save_stack_intermediate(string str) {
+		stack<Matrix> tmp;
+		ofstream f;
+		f.open(str);
+		Matrix m;
+		while(!dfs_stack.empty()) {
+			f << dfs_stack.top() << endl;
+			m = dfs_stack.top();
+			tmp.push(m);
+			dfs_stack.pop();
+		}
+
+		while(!tmp.empty()) {
+			m = tmp.top();
+			dfs_stack.push(m);
+			tmp.pop();
+		}
 	}
 
 	void Explorer::save_stack(string str, stack<Matrix> s) {
@@ -61,6 +81,18 @@ namespace VAN_MAASTRICHT {
 		}
 	}
 
+	time_t Explorer::get_current_time() {
+		time_t t1, t2;
+		struct tm tms;
+		time(&t1);
+		localtime_r(&t1, &tms);
+		tms.tm_hour = 0;
+		tms.tm_min = 0;
+		tms.tm_sec = 0;
+		t2 = mktime(&tms);
+		return t1 - t2;
+	}
+
 	void Explorer::explore() {
 		/*while(number_of_solutions == 0 && !dfs_stack.empty()) {
 			Matrix matrix = dfs_stack.top();
@@ -77,15 +109,32 @@ namespace VAN_MAASTRICHT {
 		cout << "Depth of top element: " << (matrix.get_row(0) & (~((uint32_t) 0) >> (32 - 22))) << endl;*/
 	
 		stack<Matrix> d_stack;
+		unsigned long nodes_searched = 0;
+		int hour = 1;
 		while(!dfs_stack.empty()) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
-			if(matrix.get_depth() == 56) {
+			if(matrix.get_depth() == 130) {
 				d_stack.push(matrix);
 			}
 			else {
 				check_valid(matrix);
 			}
+			nodes_searched++;
+			if(nodes_searched % 50000000 == 0) {
+				if((hour > 0) && (hour * 3600) < get_current_time()) {
+					cout << "saving stack " << hour << endl;
+					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
+					hour++;
+					cout << "stack " << hour - 1 << " saved" << endl;
+				}
+				else if((hour == 0) && (get_current_time() < 3600)) {
+					cout << "saving stack " << hour << endl;
+					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
+					hour++;
+					cout << "stack " << hour - 1 << " saved" << endl;
+				}
+}
 		}
 		matrix = d_stack.top();
 		
@@ -93,6 +142,7 @@ namespace VAN_MAASTRICHT {
 		//cout << "d_stack saved to \"d55_stack.txt\"" << endl;
 		cout << "Elements in stack: " << d_stack.size() << endl;
 		cout << "Depth of top element: " << (matrix.get_depth()) << endl;
+		cout << "Nodes searched: " << nodes_searched << endl;
 	}
 
 	void Explorer::check_valid(Matrix &m) {

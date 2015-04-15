@@ -2,6 +2,7 @@
 #include <fstream>
 #include <stack>
 #include <bitset>
+#include <ctime>
 #include "Matrix.h"
 #include "Explorer.h"
 #include "Converter.h"
@@ -61,6 +62,7 @@ int main(int argc, char* argv[]) {
 	e.read_stack("base.txt");
 	cout << "Starting to explore." << endl;
 	e.explore();
+
 	//cout << "Saving the stack." << endl;
 	//e.save_stack("out.txt");
 

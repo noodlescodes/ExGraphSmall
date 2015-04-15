@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <stack>
+#include <ctime>
 #include "Matrix.h"
 
 namespace VAN_MAASTRICHT {
@@ -9,6 +10,7 @@ namespace VAN_MAASTRICHT {
 
 		void explore();
 		void save_stack(string str);
+		void save_stack_intermediate(string str);
 		void save_stack(string str, stack<Matrix> s);
 		void read_stack(string str);
 		void generate_children();
@@ -18,6 +20,8 @@ namespace VAN_MAASTRICHT {
 		void check_valid(Matrix &m);
 		bool triangles_exist();
 		bool squares_exist();
+
+		time_t get_current_time(); // returns current time since midnight
 
 	private:
 		unsigned int max_edges_found = 0;
