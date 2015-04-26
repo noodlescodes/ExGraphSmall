@@ -108,20 +108,23 @@ namespace VAN_MAASTRICHT {
 		cout << "Elements in stack: " << dfs_stack.size() << endl;
 		cout << "Depth of top element: " << (matrix.get_row(0) & (~((uint32_t) 0) >> (32 - 22))) << endl;*/
 	
-		stack<Matrix> d_stack;
+		//stack<Matrix> d_stack;
 		unsigned long nodes_searched = 0;
+		unsigned long nodes_at_130 = 0;
 		int hour = 1;
 		while(!dfs_stack.empty()) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
 			if(matrix.get_depth() == 130) {
-				d_stack.push(matrix);
+				//d_stack.push(matrix);
+				nodes_at_130++;
 			}
 			else {
 				check_valid(matrix);
 			}
 			nodes_searched++;
 			if(nodes_searched % 50000000 == 0) {
+				cout << "Nodes searched (probably overflow): " << nodes_searched << endl;
 				if((hour > 0) && (hour * 3600) < get_current_time()) {
 					cout << "saving stack " << hour << endl;
 					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
@@ -136,12 +139,12 @@ namespace VAN_MAASTRICHT {
 				}
 }
 		}
-		matrix = d_stack.top();
+		//matrix = d_stack.top();
 		
 		//save_stack("d55_stack.txt", d_stack);
 		//cout << "d_stack saved to \"d55_stack.txt\"" << endl;
-		cout << "Elements in stack: " << d_stack.size() << endl;
-		cout << "Depth of top element: " << (matrix.get_depth()) << endl;
+		cout << "Elements in stack: " << nodes_at_130 << endl;
+		//cout << "Depth of top element: " << (matrix.get_depth()) << endl;
 		cout << "Nodes searched: " << nodes_searched << endl;
 	}
 
