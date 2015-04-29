@@ -100,11 +100,11 @@ namespace VAN_MAASTRICHT {
 	
 	// overloaded output operator. Useful for debugging and writing to file.
 	ostream& operator <<(ostream& outs, const Matrix& mat) {
+		outs << "{";
 		for(unsigned int i = 0; i < mat.get_size() - 1; i++) {
-			bitset<32> x(mat.get_row(i));
-			outs << x << endl;
+			outs << mat.get_row(i) << ", ";
 		}
-		outs << bitset<32>(mat.get_row(mat.get_size() - 1));
+		outs << mat.get_row(mat.get_size() - 1) << "}";
 		return outs;
 	}
 }

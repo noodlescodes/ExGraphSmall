@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
+#include <sstream>
 #include "Explorer.h"
 
 using namespace std;
@@ -50,27 +52,22 @@ namespace VAN_MAASTRICHT {
 	}
 
 	void Explorer::read_stack(string str) {
-		uint32_t N = 1 << 31;
 		stack<Matrix> tmp_stack;
 		Matrix m = Matrix();
 		ifstream f;
 		f.open(str);
 		if(f.is_open()) {
 			string line;
-			unsigned int i = 0;
 			while(getline(f, line)) {
-				uint32_t j = 0;
-				for(unsigned int k = 0; k < line.length(); k++) {
-					if(line[k] == '1') {
-						j |= (N >> k);
-					}
+				line = line.substr(1, line.length() - 2);
+				line.erase(remove(line.begin(), line.end(), ' '), line.end());
+				stringstream lineStream(line);
+				string num;
+				for(uint i = 0; i < 32; i++) {
+					getline(lineStream, num, ',');
+					m.set_row(i, atoi(num.c_str()));
 				}
-				m.set_row(i, j);
-				i++;
-				i %= 32;
-				if(i == 0) {
-					tmp_stack.push(m);
-				}
+				tmp_stack.push(m);
 			}
 		}
 		f.close();
@@ -111,11 +108,11 @@ namespace VAN_MAASTRICHT {
 		//stack<Matrix> d_stack;
 		unsigned long nodes_searched = 0;
 		unsigned long nodes_at_130 = 0;
-		int hour = 1;
+		//int hour = 1;
 		while(!dfs_stack.empty()) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
-			if(matrix.get_depth() == 130) {
+			if(matrix.get_depth() == 90) {
 				//d_stack.push(matrix);
 				nodes_at_130++;
 			}
@@ -123,7 +120,7 @@ namespace VAN_MAASTRICHT {
 				check_valid(matrix);
 			}
 			nodes_searched++;
-			if(nodes_searched % 50000000 == 0) {
+			/*if(nodes_searched % 50000000 == 0) {
 				cout << "Nodes searched (probably overflow): " << nodes_searched << endl;
 				if((hour > 0) && (hour * 3600) < get_current_time()) {
 					cout << "saving stack " << hour << endl;
@@ -137,7 +134,7 @@ namespace VAN_MAASTRICHT {
 					hour++;
 					cout << "stack " << hour - 1 << " saved" << endl;
 				}
-}
+				}*/
 		}
 		//matrix = d_stack.top();
 		

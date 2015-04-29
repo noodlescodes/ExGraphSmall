@@ -3,6 +3,9 @@
 #include <stack>
 #include <bitset>
 #include <ctime>
+#include <string>
+#include <algorithm>
+#include <sstream>
 #include "Matrix.h"
 #include "Explorer.h"
 #include "Converter.h"
@@ -21,28 +24,23 @@ void stack_to_file(string str, stack<Matrix> dfs_stack) {
 }
 
 stack<Matrix> stack_from_file(string str) {
-	uint32_t N = 1 << 31;
-	cout << "N: " << bitset<32>(N) << endl;
 	stack<Matrix> tmp_stack;
 	Matrix m = Matrix();
 	ifstream f;
 	f.open(str);
 	if(f.is_open()) {
 		string line;
-		unsigned int i = 0;
 		while(getline(f, line)) {
-			uint32_t j = 0;
-			for(unsigned int k = 0; k < line.length(); k++) {
-				if(line[k] == '1') {
-					j |= (N >> k);
-				}
+			line = line.substr(1, line.length() - 2);
+			line.erase(remove(line.begin(), line.end(), ' '), line.end());
+			stringstream lineStream(line);
+			string num;
+			for(uint i = 0; i < 32; i++) {
+				getline(lineStream, num, ',');
+				m.set_row(i, atoi(num.c_str()));
 			}
-			m.set_row(i, j);
-			i++;
-			i %= 32;
-			if(i == 0) {
-				tmp_stack.push(m);
-			}
+			cout << m << endl;
+			tmp_stack.push(m);
 		}
 	}
 	f.close();
@@ -71,8 +69,7 @@ int main(int argc, char* argv[]) {
 	//c.bin_to_dec("d56_stack.txt", "d56_stack_dec.txt");
 	//cout << "Fin" << endl;
 
-	/*stack<Matrix> dfs_stack;
-	Matrix m = Matrix();
+	/*Matrix m = Matrix();
 	m.set_row(0,130023424);
 	m.set_row(1,4063232);
 	m.set_row(2,126976);
