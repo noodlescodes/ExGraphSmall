@@ -15,8 +15,10 @@ namespace VAN_MAASTRICHT {
 	void Explorer::save_stack(string str) {
 		ofstream f;
 		f.open(str, ios::app);
+		cout << dfs_stack.size() << endl;
 		while(!dfs_stack.empty()) {
 			f << dfs_stack.top() << endl;
+			cout << dfs_stack.top() << endl;
 			dfs_stack.pop();
 		}
 		f.close();
@@ -112,7 +114,7 @@ namespace VAN_MAASTRICHT {
 		while(!dfs_stack.empty()) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
-			if(matrix.get_depth() == 90) {
+			if(matrix.get_depth() == 80) {
 				//d_stack.push(matrix);
 				nodes_at_130++;
 			}
@@ -142,6 +144,48 @@ namespace VAN_MAASTRICHT {
 		//cout << "d_stack saved to \"d55_stack.txt\"" << endl;
 		cout << "Elements in stack: " << nodes_at_130 << endl;
 		//cout << "Depth of top element: " << (matrix.get_depth()) << endl;
+		cout << "Nodes searched: " << nodes_searched << endl;
+	}
+
+	void Explorer::explore(unsigned int max_search_depth) {
+		Matrix matrix;
+		unsigned long nodes_searched = 0;
+		unsigned long nodes_at_depth = 0;
+		while(!dfs_stack.empty()) {
+			matrix = dfs_stack.top();
+			dfs_stack.pop();
+			if(matrix.get_depth() == max_search_depth) {
+				nodes_at_depth++;
+			}
+			else {
+				check_valid(matrix);
+			}
+			nodes_searched++;
+		}
+
+		cout << "Nodes at depth " << max_search_depth << ": " << nodes_at_depth << endl;
+		cout << "Nodes searched: " << nodes_searched << endl;
+	}
+
+	void Explorer::explore(unsigned int max_search_depth, string out_file) {
+		Matrix matrix;
+		unsigned long nodes_searched = 0;
+		stack<Matrix> depth_stack;
+		while(!dfs_stack.empty()) {
+			matrix = dfs_stack.top();
+			dfs_stack.pop();
+			if(matrix.get_depth() == max_search_depth) {
+				depth_stack.push(matrix);
+			}
+			else {
+				check_valid(matrix);
+			}
+			nodes_searched++;
+		}
+
+		save_stack(out_file, depth_stack);
+
+		cout << "Nodes at depth " << max_search_depth << ": " << depth_stack.size() << endl;
 		cout << "Nodes searched: " << nodes_searched << endl;
 	}
 

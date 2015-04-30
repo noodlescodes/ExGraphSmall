@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <cstdlib>
 #include "Matrix.h"
 #include "Explorer.h"
 #include "Converter.h"
@@ -55,14 +56,67 @@ stack<Matrix> stack_from_file(string str) {
 }
 
 int main(int argc, char* argv[]) {
+	string input_file;
+	string output_file = "";
+	unsigned int max_search_depth = 0;
+	bool save_to_file = false;
+
+	if(argc < 3) {
+		cout << "Need input (-i)" << endl;
+		cout << "Optional switches:" << endl;
+		cout << " * -d for depth" << endl;
+		cout << " * -o <file> for output file" << endl;
+		return 0;
+	}
+
+	for(int i = 1; i < argc; i += 2) {
+		if(i + 1 != argc) {
+			if(string(argv[i]) == "-d") {
+				max_search_depth = atoi(argv[i + 1]);
+				cout << "search depth: " << max_search_depth << endl;
+			}
+			else if(string(argv[i]) == "-i") {
+				input_file = argv[i + 1];
+				cout << "input file: " << input_file << endl;
+			}
+			else if(string(argv[i]) == "-o") {
+				output_file = argv[i + 1];
+				cout << "output file: " << output_file << endl;
+			}
+			else if(string(argv[i]) == "-s") {
+				if(string(argv[i + 1]) == "true") {
+					save_to_file = true;
+				}
+				if(save_to_file) {
+					cout << "Save to file: true" << endl;
+				}
+				else {
+					cout << "Save to file: false" << endl;
+				}
+			}
+		}
+	}
+
+	cout << endl;
+	
 	Explorer e = Explorer();
 	cout << "Reading from base.txt." << endl;
-	e.read_stack("base.txt");
+	e.read_stack(input_file);
 	cout << "Starting to explore." << endl;
-	e.explore();
+	if(max_search_depth > 0) {
+		if(output_file.length() > 0) {
+			e.explore(max_search_depth, output_file);
+		}
+		else {
+			e.explore(max_search_depth);
+		}
+	}
+	else {
+		e.explore();
+	}
 
 	//cout << "Saving the stack." << endl;
-	//e.save_stack("out.txt");
+	//e.save_stack(output_file);
 
 	//Converter c = Converter();
 	//cout << "Converting the output file." << endl;

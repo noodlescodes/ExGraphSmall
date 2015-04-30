@@ -9,6 +9,8 @@ namespace VAN_MAASTRICHT {
 		Explorer();
 
 		void explore();
+		void explore(unsigned int max_search_depth);
+		void explore(unsigned int max_search_depth, string out_file);
 		void save_stack(string str);
 		void save_stack_intermediate(string str);
 		void save_stack(string str, stack<Matrix> s);
