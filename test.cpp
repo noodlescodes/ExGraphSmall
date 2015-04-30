@@ -115,8 +115,10 @@ int main(int argc, char* argv[]) {
 		e.explore();
 	}
 
-	//cout << "Saving the stack." << endl;
-	//e.save_stack(output_file);
+	if(output_file.length() > 0 && max_search_depth == 0) {
+		cout << "Saving the stack." << endl;
+		e.save_stack(output_file);
+	}
 
 	//Converter c = Converter();
 	//cout << "Converting the output file." << endl;
