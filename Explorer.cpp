@@ -92,65 +92,45 @@ namespace VAN_MAASTRICHT {
 		return t1 - t2;
 	}
 
-	void Explorer::explore() {
-		/*while(number_of_solutions == 0 && !dfs_stack.empty()) {
-			Matrix matrix = dfs_stack.top();
-			dfs_stack.pop();
-			check_valid(matrix);
-		}*/
+	void Explorer::explore(bool backup) {
 		Matrix matrix;
-		/*for(int i = 0; i < 25000000; i++) {
-			matrix = dfs_stack.top();
-			dfs_stack.pop();
-			check_valid(matrix);
-		}
-		cout << "Elements in stack: " << dfs_stack.size() << endl;
-		cout << "Depth of top element: " << (matrix.get_row(0) & (~((uint32_t) 0) >> (32 - 22))) << endl;*/
-	
-		//stack<Matrix> d_stack;
 		unsigned long nodes_searched = 0;
-		unsigned long nodes_at_130 = 0;
-		//int hour = 1;
-		while(!dfs_stack.empty()) {
+		int hour = 1;
+		while(number_of_solutions == 0 && !dfs_stack.empty()) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
-			if(matrix.get_depth() == 80) {
-				//d_stack.push(matrix);
-				nodes_at_130++;
+			if(matrix.get_depth() == 190) {
+				number_of_solutions++;
+				cout << matrix << endl;
 			}
 			else {
 				check_valid(matrix);
 			}
 			nodes_searched++;
-			/*if(nodes_searched % 50000000 == 0) {
-				cout << "Nodes searched (probably overflow): " << nodes_searched << endl;
+			if(backup && nodes_searched % 50000000 == 0) {
+				cout << "Nodes searched (possible overflow): " << nodes_searched << endl;
 				if((hour > 0) && (hour * 3600) < get_current_time()) {
-					cout << "saving stack " << hour << endl;
+					cout << "Saving stack " << hour << endl;
 					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
 					hour++;
-					cout << "stack " << hour - 1 << " saved" << endl;
+					cout << "Stack " << hour - 1 << " saved" << endl;
 				}
 				else if((hour == 0) && (get_current_time() < 3600)) {
-					cout << "saving stack " << hour << endl;
+					cout << "Saving stack " << hour << endl;
 					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
 					hour++;
-					cout << "stack " << hour - 1 << " saved" << endl;
+					cout << "Stack " << hour - 1 << " saved" << endl;
 				}
-				}*/
+			}			
 		}
-		//matrix = d_stack.top();
 		
-		//save_stack("d55_stack.txt", d_stack);
-		//cout << "d_stack saved to \"d55_stack.txt\"" << endl;
-		cout << "Elements in stack: " << nodes_at_130 << endl;
-		//cout << "Depth of top element: " << (matrix.get_depth()) << endl;
-		cout << "Nodes searched: " << nodes_searched << endl;
 	}
 
-	void Explorer::explore(unsigned int max_search_depth) {
+	void Explorer::explore(unsigned int max_search_depth, bool backup) {
 		Matrix matrix;
 		unsigned long nodes_searched = 0;
 		unsigned long nodes_at_depth = 0;
+		int hour = 1;
 		while(!dfs_stack.empty()) {
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
@@ -161,15 +141,31 @@ namespace VAN_MAASTRICHT {
 				check_valid(matrix);
 			}
 			nodes_searched++;
+			if(backup && nodes_searched % 50000000 == 0) {
+				cout << "Nodes searched (possible overflow): " << nodes_searched << endl;
+				if((hour > 0) && (hour * 3600) < get_current_time()) {
+					cout << "Saving stack " << hour << endl;
+					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
+					hour++;
+					cout << "Stack " << hour - 1 << " saved" << endl;
+				}
+				else if((hour == 0) && (get_current_time() < 3600)) {
+					cout << "Saving stack " << hour << endl;
+					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
+					hour++;
+					cout << "Stack " << hour - 1 << " saved" << endl;
+				}
+			}
 		}
 
 		cout << "Nodes at depth " << max_search_depth << ": " << nodes_at_depth << endl;
 		cout << "Nodes searched: " << nodes_searched << endl;
 	}
 
-	void Explorer::explore(unsigned int max_search_depth, string out_file) {
+	void Explorer::explore(unsigned int max_search_depth, string out_file, bool backup) {
 		Matrix matrix;
 		unsigned long nodes_searched = 0;
+		int hour = 1;
 		stack<Matrix> depth_stack;
 		while(!dfs_stack.empty()) {
 			matrix = dfs_stack.top();
@@ -181,6 +177,21 @@ namespace VAN_MAASTRICHT {
 				check_valid(matrix);
 			}
 			nodes_searched++;
+			if(backup && nodes_searched % 50000000 == 0) {
+				cout << "Nodes searched (possible overflow): " << nodes_searched << endl;
+				if((hour > 0) && (hour * 3600) < get_current_time()) {
+					cout << "Saving stack " << hour << endl;
+					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
+					hour++;
+					cout << "Stack " << hour - 1 << " saved" << endl;
+				}
+				else if((hour == 0) && (get_current_time() < 3600)) {
+					cout << "Saving stack " << hour << endl;
+					save_stack_intermediate("dfs_stack" + to_string(hour) + ".txt");
+					hour++;
+					cout << "Stack " << hour - 1 << " saved" << endl;
+				}
+			}
 		}
 
 		save_stack(out_file, depth_stack);

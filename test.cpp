@@ -62,10 +62,11 @@ int main(int argc, char* argv[]) {
 	bool save_to_file = false;
 
 	if(argc < 3) {
-		cout << "Need input (-i)" << endl;
+		cout << "Need input (-i) <file>" << endl;
 		cout << "Optional switches:" << endl;
-		cout << " * -d for depth" << endl;
+		cout << " * -d <number> for depth" << endl;
 		cout << " * -o <file> for output file" << endl;
+		cout << " * -s <true/false> to make a backup of the main stack every hour" << endl;
 		return 0;
 	}
 
@@ -105,14 +106,14 @@ int main(int argc, char* argv[]) {
 	cout << "Starting to explore." << endl;
 	if(max_search_depth > 0) {
 		if(output_file.length() > 0) {
-			e.explore(max_search_depth, output_file);
+			e.explore(max_search_depth, output_file, save_to_file);
 		}
 		else {
-			e.explore(max_search_depth);
+			e.explore(max_search_depth, save_to_file);
 		}
 	}
 	else {
-		e.explore();
+		e.explore(save_to_file);
 	}
 
 	if(output_file.length() > 0 && max_search_depth == 0) {

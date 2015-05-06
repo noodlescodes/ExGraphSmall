@@ -8,9 +8,9 @@ namespace VAN_MAASTRICHT {
 	public:
 		Explorer();
 
-		void explore();
-		void explore(unsigned int max_search_depth);
-		void explore(unsigned int max_search_depth, string out_file);
+		void explore(bool backup);
+		void explore(unsigned int max_search_depth, bool backup);
+		void explore(unsigned int max_search_depth, string out_file, bool backup);
 		void save_stack(string str);
 		void save_stack_intermediate(string str);
 		void save_stack(string str, stack<Matrix> s);
