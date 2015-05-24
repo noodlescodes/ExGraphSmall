@@ -1,10 +1,12 @@
 #include <bitset>
+#include <iostream>
 #include "Matrix.h"
 
 namespace VAN_MAASTRICHT {
 	Matrix::Matrix() {
 		for(unsigned int i = 0; i < size; i++) {
 			mat[i] = 0;
+			mask[i] = (unsigned int)~0;
 		}
 	}
 	
@@ -41,6 +43,11 @@ namespace VAN_MAASTRICHT {
 		mat[i] |= (1 << (size - j - 1));
 		mat[j] |= (1 << (size - i - 1));
 	}
+
+	void Matrix::remove_entry(uint32_t i, uint32_t j) {
+		mat[i] &= ((unsigned int)~0 - (unsigned int)(1 << (size - j - 1)));
+		mat[j] &= ((unsigned int)~0 - (unsigned int)(1 << (size - i - 1)));
+	}
 	
 	// set the ith row to the uint32_t j
 	void Matrix::set_row(unsigned int i, uint32_t j) {
@@ -50,6 +57,18 @@ namespace VAN_MAASTRICHT {
 		mat[i] = j;
 	}
 
+	void Matrix::mask_remove_entry(unsigned int i, unsigned int j) {
+		mask[i] &= ((unsigned int)~0 - (unsigned int)(1 << (size - j - 1)));
+		mask[j] &= ((unsigned int)~0 - (unsigned int)(1 << (size - i - 1)));
+	}
+
+	void Matrix::mask_set_row(unsigned int i, uint32_t j) {
+		if(i < 0 || i >= size) {
+			return;
+		}
+		mask[i] = j;
+	}
+
 	// get the entry at i,j
 	uint32_t Matrix::get_entry(unsigned int i, unsigned int j) {
 		return (mat[i] & (N >> j)) >> (size - j - 1);
@@ -57,6 +76,37 @@ namespace VAN_MAASTRICHT {
 
 	uint32_t Matrix::get_depth() {
 		return (mat[0] & DEPTH_MASK);
+	}
+
+	void Matrix::calculate_mask() {
+		for(unsigned int i = 0; i < size; i++) {
+			mask[i] &= ~(1 << (size - i - 1));
+		}
+		
+		for(unsigned int i = 0; i < size; i++) {
+			for(unsigned int j = i + 1; j < size; j++) {
+				if(i < 10) {
+					mask_remove_entry(i, j);
+				}
+				if(get_entry(i, j) != 0 ) {
+					mask_remove_entry(i, j);
+				}
+				else {
+					set_entry(i, j);
+					if(check_triangles(i, j)) {
+						mask_remove_entry(i, j);
+						remove_entry(i, j);
+						continue;
+					}
+					if(check_squares(j)) {
+						mask_remove_entry(i, j);
+						remove_entry(i, j);
+						continue;
+					}
+					remove_entry(i, j);
+				}
+			}
+		}
 	}
 
 	// get the ith row
@@ -70,6 +120,22 @@ namespace VAN_MAASTRICHT {
 	// get the ith row
 	uint32_t Matrix::get_row(unsigned int i) {
 		return mat[i];
+	}
+
+	// get the ith row of the mask
+	const uint32_t Matrix::get_mask_row(unsigned int i) const {
+		if(i >= size || i < 0) {
+			return -1;
+		}
+		return mask[i];
+	}
+
+	// get the ith row of the mask
+	uint32_t Matrix::get_mask_row(unsigned int i) {
+		if(i >= size || i < 0) {
+			return -1;
+		}
+		return mask[i];
 	}
 
 	// get the size of the graph
@@ -104,7 +170,11 @@ namespace VAN_MAASTRICHT {
 		for(unsigned int i = 0; i < mat.get_size() - 1; i++) {
 			outs << mat.get_row(i) << ", ";
 		}
-		outs << mat.get_row(mat.get_size() - 1) << "}";
+		outs << mat.get_row(mat.get_size() - 1) << "}{";
+		for(unsigned int i = 0; i < mat.get_size() - 1; i++) {
+			outs << mat.get_mask_row(i) << ", ";
+		}
+		outs << mat.get_mask_row(mat.get_size() - 1) << "}";
 		return outs;
 	}
 }

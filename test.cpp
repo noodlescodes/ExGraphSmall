@@ -14,16 +14,6 @@
 using namespace std;
 using namespace VAN_MAASTRICHT;
 
-void stack_to_file(string str, stack<Matrix> dfs_stack) {
-	ofstream f;
-	f.open(str, ios::app);
-	while(!dfs_stack.empty()) {
-		f << dfs_stack.top() << endl;
-		dfs_stack.pop();
-	}
-	f.close();
-}
-
 stack<Matrix> stack_from_file(string str) {
 	stack<Matrix> tmp_stack;
 	Matrix m = Matrix();
@@ -55,8 +45,53 @@ stack<Matrix> stack_from_file(string str) {
 	return dfs_stack;
 }
 
+Matrix read_from_file(string str) {
+	Matrix m = Matrix();
+	ifstream f;
+	f.open(str);
+	if(f.is_open()) {
+		string line, mat, mask;
+		getline(f, line);
+		unsigned int pos = line.find("}") + 1;
+		mat  = line.substr(0, pos);
+		mask = line.substr(pos);
+		mat = mat.substr(1, mat.length() - 2);
+		mat.erase(remove(mat.begin(), mat.end(), ' '), mat.end());
+		mask = mask.substr(1, mask.length() - 2);
+		mask.erase(remove(mask.begin(), mask.end(), ' '), mask.end());
+		stringstream mat_stream(mat);
+		stringstream mask_stream(mask);
+		string num;
+		for(unsigned int i = 0; i < 32; i++) {
+			getline(mat_stream, num, ',');
+			m.set_row(i, atoi(num.c_str()));
+			getline(mask_stream, num, ',');
+			m.mask_set_row(i, atoi(num.c_str()));
+		}
+	}
+
+	return m;
+}
+
 int main(int argc, char* argv[]) {
-	string input_file;
+	Matrix m = read_from_file("base.txt");
+	//cout << m << endl << endl;
+	m.calculate_mask();
+	cout << m << endl;
+
+	int num_ones = 0;
+	for(unsigned int i = 0; i < 32; i++) {
+		if(i < 10) {
+		cout << i << "   " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
+		}
+		else {
+			cout << i << "  " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
+		}
+		num_ones += __builtin_popcount(m.get_mask_row(i));
+	}
+	cout << endl << "Num ones: " << num_ones / 2 << endl;
+	
+	/*string input_file;
 	string output_file = "";
 	unsigned int max_search_depth = 0;
 	bool save_to_file = false;
@@ -119,7 +154,7 @@ int main(int argc, char* argv[]) {
 	if(output_file.length() > 0 && max_search_depth == 0) {
 		cout << "Saving the stack." << endl;
 		e.save_stack(output_file);
-	}
+		}*/
 
 	//Converter c = Converter();
 	//cout << "Converting the output file." << endl;
