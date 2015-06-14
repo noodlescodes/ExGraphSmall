@@ -15,13 +15,15 @@ namespace VAN_MAASTRICHT {
 		void save_stack_intermediate(string str);
 		void save_stack(string str, stack<Matrix> s);
 		void read_stack(string str);
-		void generate_children();
+		void generate_children(Matrix &m);
 		
 		bool continue_heuristics();
 		bool degree_sat();
 		void check_valid(Matrix &m);
 		bool triangles_exist();
 		bool squares_exist();
+
+		void add_matrix_to_stack(Matrix &m);
 
 		time_t get_current_time(); // returns current time since midnight
 

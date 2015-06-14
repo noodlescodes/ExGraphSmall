@@ -75,11 +75,31 @@ Matrix read_from_file(string str) {
 
 int main(int argc, char* argv[]) {
 	Matrix m = read_from_file("base.txt");
-	//cout << m << endl << endl;
-	m.calculate_mask();
+
+	for(unsigned int i = 16; i < 32; i++) {
+		for(unsigned int j = i; j < 32; j++) {
+			if(m.get_mask_entry(i, j) == 1) {
+				m.mask_remove_entry(i, j);
+			}
+		}
+	}
+	for(unsigned int j = 31; j < 32; j++) {
+		if(m.get_mask_entry(15, j) == 1) {
+			m.mask_remove_entry(15, j);
+		}
+	}
+	
 	cout << m << endl;
 
-	int num_ones = 0;
+	cout << "    ";
+	for(unsigned int i = 0; i < 32; i++) {
+		cout << i % 10;
+	}
+	cout << "   ";
+	for(unsigned int i = 0; i < 32; i++) {
+		cout << i % 10;
+	}
+	cout << endl << endl;
 	for(unsigned int i = 0; i < 32; i++) {
 		if(i < 10) {
 		cout << i << "   " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
@@ -87,9 +107,12 @@ int main(int argc, char* argv[]) {
 		else {
 			cout << i << "  " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
 		}
-		num_ones += __builtin_popcount(m.get_mask_row(i));
 	}
-	cout << endl << "Num ones: " << num_ones / 2 << endl;
+	cout << endl << "Num ones: " << m.count_ones_mask() << endl;
+
+	Explorer e = Explorer();
+	e.add_matrix_to_stack(m);
+	e.explore(false);
 	
 	/*string input_file;
 	string output_file = "";

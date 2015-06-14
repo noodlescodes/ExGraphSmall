@@ -21,8 +21,11 @@ namespace VAN_MAASTRICHT {
 		void mask_remove_entry(unsigned int i, unsigned int j);
 		void mask_set_row(unsigned int i, uint32_t j);
 		uint32_t get_entry(unsigned int i, unsigned int j);
-		uint32_t get_depth();
-		void calculate_mask();
+		uint32_t get_mask_entry(unsigned int i, unsigned int j);
+		uint32_t get_depth(); // deprecated
+		uint32_t count_ones_mask();
+		void calculate_mask_base();
+		void calculate_mask(unsigned int i0, unsigned int j0); // i0 and j0 are the coordinates of the last added edge
 		
 		const unsigned int get_size() const;
 		unsigned int get_size();

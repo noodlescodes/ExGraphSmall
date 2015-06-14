@@ -74,11 +74,24 @@ namespace VAN_MAASTRICHT {
 		return (mat[i] & (N >> j)) >> (size - j - 1);
 	}
 
+	uint32_t Matrix::get_mask_entry(unsigned int i, unsigned int j) {
+		return (mask[i] & (N >> j)) >> (size - j - 1);
+	}
+
+	// deprecated
 	uint32_t Matrix::get_depth() {
 		return (mat[0] & DEPTH_MASK);
 	}
 
-	void Matrix::calculate_mask() {
+	uint32_t Matrix::count_ones_mask() {
+		unsigned int count = 0;
+		for(unsigned int i = 0; i < size; i++) {
+			count += __builtin_popcount(mask[i]);
+		}
+		return (count >> 1);
+	}
+
+	void Matrix::calculate_mask_base() {
 		for(unsigned int i = 0; i < size; i++) {
 			mask[i] &= ~(1 << (size - i - 1));
 		}
@@ -107,6 +120,30 @@ namespace VAN_MAASTRICHT {
 				}
 			}
 		}
+	}
+
+	void Matrix::calculate_mask(unsigned int i0, unsigned int j0) {
+		for(unsigned int i = i0; i < size; i++) {
+			for(unsigned int j = j0 + 1; j < size; j++) {
+				// I will improve this bit after I get it working.
+				if(get_mask_entry(i, j) == 0) {
+					continue;
+				}
+				set_entry(i, j);
+				if(check_triangles(i, j)) {
+					mask_remove_entry(i, j);
+					remove_entry(i, j);
+					continue;
+				}
+				if(check_squares(j)) {
+					mask_remove_entry(i, j);
+					remove_entry(i, j);
+					continue;
+				}
+				remove_entry(i, j);
+			}
+		}
+		mask_remove_entry(i0, j0);
 	}
 
 	// get the ith row

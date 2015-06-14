@@ -80,6 +80,10 @@ namespace VAN_MAASTRICHT {
 		}
 	}
 
+	void Explorer::add_matrix_to_stack(Matrix &m) {
+		dfs_stack.push(m);
+	}
+
 	time_t Explorer::get_current_time() {
 		time_t t1, t2;
 		struct tm tms;
@@ -96,18 +100,26 @@ namespace VAN_MAASTRICHT {
 		Matrix matrix;
 		unsigned long nodes_searched = 0;
 		int hour = 1;
+		unsigned int max_stack_size = 0;
 		while(number_of_solutions == 0 && !dfs_stack.empty()) {
+			if(dfs_stack.size() > max_stack_size) {
+				max_stack_size = dfs_stack.size();
+			}
 			matrix = dfs_stack.top();
 			dfs_stack.pop();
-			if(matrix.get_depth() == 190) {
+			if(matrix.count_ones_mask() == 0) {
+				// currently just checking to see if we're at a point where we can't add any edges. Will check number of edges later
 				number_of_solutions++;
 				cout << matrix << endl;
 			}
 			else {
-				check_valid(matrix);
+				generate_children(matrix);
 			}
 			nodes_searched++;
-			if(backup && nodes_searched % 50000000 == 0) {
+			if(nodes_searched % 10000000 == 0) {
+				cout << "nodes searched: " << nodes_searched << "; Stack size: " << dfs_stack.size() << endl;
+			}
+			/*if(backup && nodes_searched % 50000000 == 0) {
 				cout << "Nodes searched (possible overflow): " << nodes_searched << endl;
 				if((hour > 0) && (hour * 3600) < get_current_time()) {
 					cout << "Saving stack " << hour << endl;
@@ -121,8 +133,9 @@ namespace VAN_MAASTRICHT {
 					hour++;
 					cout << "Stack " << hour - 1 << " saved" << endl;
 				}
-			}			
+				}*/			
 		}
+		cout << "nodes searched: " << nodes_searched << "; Max stack size: " << max_stack_size << endl;
 		
 	}
 
@@ -198,6 +211,68 @@ namespace VAN_MAASTRICHT {
 
 		cout << "Nodes at depth " << max_search_depth << ": " << depth_stack.size() << endl;
 		cout << "Nodes searched: " << nodes_searched << endl;
+	}
+
+	void Explorer::generate_children(Matrix &m) {
+		const unsigned int VERTEXCOUNT = 32;
+		const unsigned int MINEDGES = 82;
+		const unsigned int MAXEDGES = 84;
+		const unsigned int MINDEGREE = 3;
+		const unsigned int MAXDEGREE = 5;
+
+		unsigned int edgecount = m.get_number_edges();
+
+		unsigned int row = 0;
+		unsigned int col = 0;
+		// find first edge we can add, made generally, can make it specific later
+		for(unsigned int i = 0; i < VERTEXCOUNT; i++) {
+			if(m.get_mask_row(i) > 0) {
+				row = i;
+				col = __builtin_clz(m.get_mask_row(i));
+			}
+		}
+
+		m.mask_remove_entry(row, col);
+		
+		// left child
+		bool err = false;
+		if(!(edgecount + m.count_ones_mask() < MINEDGES)) {
+			// this check only makes sense if we've at the last edge of a row
+			// THOUGHT: Would it make sense to do m.get_degree(row) + __builtin_popcount(m.get_mask_row(row)) < MINDEGREE?
+			if(((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE))) {
+				err = true;
+			}
+		}
+		else {
+			err = true;
+		}
+
+		if(!err) {
+			// calculating the mask for the left child isn't necessary, just removing the entry in the mask we're working on
+			dfs_stack.push(m);
+		}
+
+		// right child
+		err = false;
+
+		m.set_entry(row, col);
+		++edgecount;
+
+		m.calculate_mask(row, col);
+
+		err |= (edgecount > MAXEDGES);
+
+		err |= (edgecount + m.count_ones_mask() < MINEDGES);
+
+		err |= (m.get_degree(row) > MAXDEGREE);
+		err |= (m.get_degree(col) > MAXDEGREE);
+
+		// Same thought as for the left child
+		err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE));
+
+		if(!err) {
+			dfs_stack.push(m);
+		}
 	}
 
 	void Explorer::check_valid(Matrix &m) {
