@@ -123,27 +123,37 @@ namespace VAN_MAASTRICHT {
 	}
 
 	void Matrix::calculate_mask(unsigned int i0, unsigned int j0) {
-		for(unsigned int i = i0; i < size; i++) {
-			for(unsigned int j = j0 + 1; j < size; j++) {
-				// I will improve this bit after I get it working.
-				if(get_mask_entry(i, j) == 0) {
+		mask_remove_entry(i0, j0);
+		uint32_t row;
+		unsigned int j;
+		for(unsigned int i = 0; i < size; i++) {
+			row = get_mask_row(i);
+			while(row > 0) {
+				j = __builtin_clz(row);
+				//cout << "R: " << row << " " << bitset<32>(row) << " " << j << endl;
+				if(j < i) {
+					row &= ((unsigned int)~0 - (unsigned int)(1 << (size - j - 1)));
+					//cout << "T: " << row << " " << bitset<32>(row) << " " << j << endl;
 					continue;
 				}
 				set_entry(i, j);
 				if(check_triangles(i, j)) {
 					mask_remove_entry(i, j);
 					remove_entry(i, j);
+					row &= ((unsigned int)~0 - (unsigned int)(1 << (size - j - 1)));
 					continue;
 				}
 				if(check_squares(j)) {
 					mask_remove_entry(i, j);
 					remove_entry(i, j);
+					row &= ((unsigned int)~0 - (unsigned int)(1 << (size - j - 1)));
 					continue;
 				}
 				remove_entry(i, j);
+				row &= ((unsigned int)~0 - (unsigned int)(1 << (size - j - 1)));
+				//cout << "Q: " << row << " " << bitset<32>(row) << " " << j << endl;
 			}
 		}
-		mask_remove_entry(i0, j0);
 	}
 
 	// get the ith row

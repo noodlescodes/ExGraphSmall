@@ -75,17 +75,18 @@ Matrix read_from_file(string str) {
 
 int main(int argc, char* argv[]) {
 	Matrix m = read_from_file("base.txt");
-
-	for(unsigned int i = 16; i < 32; i++) {
+	
+	unsigned int tmp = 15;
+	for(unsigned int i = tmp; i < 32; i++) {
 		for(unsigned int j = i; j < 32; j++) {
 			if(m.get_mask_entry(i, j) == 1) {
 				m.mask_remove_entry(i, j);
 			}
 		}
 	}
-	for(unsigned int j = 31; j < 32; j++) {
-		if(m.get_mask_entry(15, j) == 1) {
-			m.mask_remove_entry(15, j);
+	for(unsigned int j = 32; j < 32; j++) {
+		if(m.get_mask_entry(tmp - 1, j) == 1) {
+			m.mask_remove_entry(tmp - 1, j);
 		}
 	}
 	
@@ -102,7 +103,7 @@ int main(int argc, char* argv[]) {
 	cout << endl << endl;
 	for(unsigned int i = 0; i < 32; i++) {
 		if(i < 10) {
-		cout << i << "   " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
+			cout << i << "   " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
 		}
 		else {
 			cout << i << "  " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;

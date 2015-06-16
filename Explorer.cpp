@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <bitset>
 #include "Explorer.h"
 
 using namespace std;
@@ -80,6 +81,27 @@ namespace VAN_MAASTRICHT {
 		}
 	}
 
+	void Explorer::pretty_print(Matrix &m) {
+		cout << m << endl;
+
+		cout << "    ";
+		for(unsigned int i = 0; i < 32; i++) {
+			cout << i % 10;
+		}
+		cout << "   ";
+		for(unsigned int i = 0; i < 32; i++) {
+			cout << i % 10;
+		}
+		cout << endl << endl;
+		for(unsigned int i = 0; i < 32; i++) {
+			if(i < 10) {
+				cout << i << "   " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
+			}
+			else cout << i << "  " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
+		}
+		cout << endl << "Num ones: " << m.count_ones_mask() << endl;
+	}
+
 	void Explorer::add_matrix_to_stack(Matrix &m) {
 		dfs_stack.push(m);
 	}
@@ -110,7 +132,7 @@ namespace VAN_MAASTRICHT {
 			if(matrix.count_ones_mask() == 0) {
 				// currently just checking to see if we're at a point where we can't add any edges. Will check number of edges later
 				number_of_solutions++;
-				cout << matrix << endl;
+				//cout << matrix << endl;
 			}
 			else {
 				generate_children(matrix);
@@ -229,6 +251,7 @@ namespace VAN_MAASTRICHT {
 			if(m.get_mask_row(i) > 0) {
 				row = i;
 				col = __builtin_clz(m.get_mask_row(i));
+				break;
 			}
 		}
 
@@ -249,6 +272,8 @@ namespace VAN_MAASTRICHT {
 
 		if(!err) {
 			// calculating the mask for the left child isn't necessary, just removing the entry in the mask we're working on
+			//cout << "LEFT" << endl;
+			//pretty_print(m);
 			dfs_stack.push(m);
 		}
 
@@ -257,8 +282,6 @@ namespace VAN_MAASTRICHT {
 
 		m.set_entry(row, col);
 		++edgecount;
-
-		m.calculate_mask(row, col);
 
 		err |= (edgecount > MAXEDGES);
 
@@ -271,6 +294,9 @@ namespace VAN_MAASTRICHT {
 		err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE));
 
 		if(!err) {
+			m.calculate_mask(row, col);
+			//cout << "RIGHT" << endl;
+			//pretty_print(m);
 			dfs_stack.push(m);
 		}
 	}

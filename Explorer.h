@@ -25,6 +25,8 @@ namespace VAN_MAASTRICHT {
 
 		void add_matrix_to_stack(Matrix &m);
 
+		void pretty_print(Matrix &m);
+
 		time_t get_current_time(); // returns current time since midnight
 
 	private:
