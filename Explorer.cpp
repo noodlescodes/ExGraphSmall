@@ -123,7 +123,7 @@ namespace VAN_MAASTRICHT {
 		unsigned long nodes_searched = 0;
 		int hour = 1;
 		unsigned int max_stack_size = 0;
-		while(number_of_solutions == 0 && !dfs_stack.empty()) {
+		while(number_of_solutions == 0 && !dfs_stack.empty()) { // Currently terminates when a single solution found. Solution incrementation commented below.
 			if(dfs_stack.size() > max_stack_size) {
 				max_stack_size = dfs_stack.size();
 			}
@@ -131,8 +131,9 @@ namespace VAN_MAASTRICHT {
 			dfs_stack.pop();
 			if(matrix.count_ones_mask() == 0) {
 				// currently just checking to see if we're at a point where we can't add any edges. Will check number of edges later
-				number_of_solutions++;
-				//cout << matrix << endl;
+				// ** WARNING: commented out incrementation of solution count (see above) **
+				// number_of_solutions++;
+				// cout << matrix << endl;
 			}
 			else {
 				generate_children(matrix);
@@ -259,21 +260,22 @@ namespace VAN_MAASTRICHT {
 		
 		// left child
 		bool err = false;
-		if(!(edgecount + m.count_ones_mask() < MINEDGES)) {
-			// this check only makes sense if we've at the last edge of a row
-			// THOUGHT: Would it make sense to do m.get_degree(row) + __builtin_popcount(m.get_mask_row(row)) < MINDEGREE?
-			if(((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE))) {
-				err = true;
-			}
-		}
-		else {
+		// if(!(edgecount + m.count_ones_mask() < MINEDGES)) {
+		// 	// this check only makes sense if we've at the last edge of a row
+		// 	// THOUGHT: Would it make sense to do m.get_degree(row) + __builtin_popcount(m.get_mask_row(row)) < MINDEGREE?
+		// }
+		// else {
+		// 	err = true;
+		// }
+
+		if(((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE))) {
 			err = true;
 		}
 
 		if(!err) {
 			// calculating the mask for the left child isn't necessary, just removing the entry in the mask we're working on
-			//cout << "LEFT" << endl;
-			//pretty_print(m);
+			// cout << "LEFT" << endl;
+			// pretty_print(m);
 			dfs_stack.push(m);
 		}
 
@@ -285,7 +287,7 @@ namespace VAN_MAASTRICHT {
 
 		err |= (edgecount > MAXEDGES);
 
-		err |= (edgecount + m.count_ones_mask() < MINEDGES);
+		// err |= (edgecount + m.count_ones_mask() < MINEDGES);
 
 		err |= (m.get_degree(row) > MAXDEGREE);
 		err |= (m.get_degree(col) > MAXDEGREE);
@@ -295,8 +297,8 @@ namespace VAN_MAASTRICHT {
 
 		if(!err) {
 			m.calculate_mask(row, col);
-			//cout << "RIGHT" << endl;
-			//pretty_print(m);
+			// cout << "RIGHT" << endl;
+			// pretty_print(m);
 			dfs_stack.push(m);
 		}
 	}
