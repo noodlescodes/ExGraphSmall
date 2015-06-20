@@ -74,9 +74,9 @@ Matrix read_from_file(string str) {
 }
 
 int main(int argc, char* argv[]) {
-	/*Matrix m = read_from_file("base.txt");
+	Matrix m = read_from_file("base.txt");
 	
-	unsigned int tmp = 17;
+	unsigned int tmp = 19;
 	for(unsigned int i = tmp; i < 32; i++) {
 		for(unsigned int j = i; j < 32; j++) {
 			if(m.get_mask_entry(i, j) == 1) {
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}
-	for(unsigned int j = 32; j < 32; j++) { 
+	for(unsigned int j = 26; j < 32; j++) { 
 		if(m.get_mask_entry(tmp - 1, j) == 1) {
 			m.mask_remove_entry(tmp - 1, j);
 		}
@@ -113,9 +113,9 @@ int main(int argc, char* argv[]) {
 
 	Explorer e = Explorer();
 	e.add_matrix_to_stack(m);
-	e.explore(false);*/
+	e.explore(false);
 
-	string input_file;
+	/*string input_file;
 	unsigned int max_search_depth = 0;
 	unsigned int row = 0;
 	unsigned int col = 0;
@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
 	Matrix m = read_from_file(input_file);
 	e.add_matrix_to_stack(m);
 	cout << "Starting to explore" << endl;
-	e.explore(row, col, false);
+	e.explore(row, col, false);*/
 	
 	/*string input_file;
 	string output_file = "";

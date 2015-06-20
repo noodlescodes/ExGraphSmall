@@ -143,6 +143,7 @@ namespace VAN_MAASTRICHT {
 				j = __builtin_clz(row);
 				//cout << "R: " << row << " " << bitset<32>(row) << " " << j << endl;
 				if(j < i) {
+					//cout << "test" << endl;
 					row &= ((unsigned int)~0 - (unsigned int)(1 << (size - j - 1)));
 					//cout << "T: " << row << " " << bitset<32>(row) << " " << j << endl;
 					continue;
