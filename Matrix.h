@@ -24,6 +24,7 @@ namespace VAN_MAASTRICHT {
 		uint32_t get_mask_entry(unsigned int i, unsigned int j);
 		uint32_t get_depth(); // deprecated
 		uint32_t count_ones_mask();
+		uint32_t get_mask_row_first_one();
 		void calculate_mask_base();
 		void calculate_mask(unsigned int i0, unsigned int j0); // i0 and j0 are the coordinates of the last added edge
 		

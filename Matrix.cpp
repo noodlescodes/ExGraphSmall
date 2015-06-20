@@ -91,6 +91,17 @@ namespace VAN_MAASTRICHT {
 		return (count >> 1);
 	}
 
+	uint32_t Matrix::get_mask_row_first_one() {
+		uint32_t k = 0;
+		for(unsigned int i = 0; i < size; i++) {
+			if(mask[i] > 0) {
+				k = i;
+				break;
+			}
+		}
+		return k;
+	}
+
 	void Matrix::calculate_mask_base() {
 		for(unsigned int i = 0; i < size; i++) {
 			mask[i] &= ~(1 << (size - i - 1));

@@ -74,9 +74,9 @@ Matrix read_from_file(string str) {
 }
 
 int main(int argc, char* argv[]) {
-	Matrix m = read_from_file("base.txt");
+	/*Matrix m = read_from_file("base.txt");
 	
-	unsigned int tmp = 15; /* 15 */
+	unsigned int tmp = 17;
 	for(unsigned int i = tmp; i < 32; i++) {
 		for(unsigned int j = i; j < 32; j++) {
 			if(m.get_mask_entry(i, j) == 1) {
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}
-	for(unsigned int j = 22 /* 32 */ ; j < 32; j++) { 
+	for(unsigned int j = 32; j < 32; j++) { 
 		if(m.get_mask_entry(tmp - 1, j) == 1) {
 			m.mask_remove_entry(tmp - 1, j);
 		}
@@ -113,7 +113,77 @@ int main(int argc, char* argv[]) {
 
 	Explorer e = Explorer();
 	e.add_matrix_to_stack(m);
-	e.explore(false);
+	e.explore(false);*/
+
+	string input_file;
+	unsigned int max_search_depth = 0;
+	unsigned int row = 0;
+	unsigned int col = 0;
+	bool row_col_specified = false;
+	if(argc < 3) {
+		cout << "Need input -i <file>" << endl;
+		cout << "Optional switches:" << endl;
+		cout << "-c <number> for comparison depth" << endl;
+		cout << "-d <number> for new depth" << endl;
+		cout << "-m <number> for the row to search to. Needs -n flag as well" << endl;
+		cout << "-n <number> for the column to search to. Needs -m flag as well" << endl;
+		return 0;
+	}
+
+	for(int i = 1; i < argc; i+= 2) {
+		if(i + 1 != argc) {
+			if(string(argv[i]) == "-c") {
+				max_search_depth = atoi(argv[i + 1]);
+				cout << "Max search depth: " << max_search_depth << endl;
+				row = 10;
+				col = 15;
+				for(unsigned int i = max_search_depth, K = 17; K > 0; i -= 5 * K, K-= 5, row += 5, col += 5) {
+					if(i < 5 * K) {
+						row += i / K;
+						col += (i % K);
+						break;
+					}
+				}
+				if(col > 31) {
+					col = 31;
+				}
+				cout << "Row: " << row << endl;
+				cout << "Col: " << col << endl;
+			}
+			else if(string(argv[i]) == "-d") {
+				max_search_depth = atoi(argv[i + 1]);
+				cout << "Max search depth: " << max_search_depth << endl;
+			}
+			else if(string(argv[i]) == "-i") {
+				input_file = argv[i + 1];
+				cout << input_file << endl;
+			}
+			else if(string(argv[i]) == "-m") {
+				row = atoi(argv[i + 1]);
+				row_col_specified = !row_col_specified;
+			}
+			else if(string(argv[i]) == "-n") {
+				col = atoi(argv[i + 1]);
+				row_col_specified = !row_col_specified;
+			}
+		}
+	}
+
+	if(row_col_specified) {
+		cout << "If using -m or -n make sure you use the other" << endl;
+		return 0;
+	}
+
+	cout << row << endl;
+	cout << col << endl;
+	//return 0;
+
+	Explorer e = Explorer();
+	cout << "Reading from base.txt." << endl;
+	Matrix m = read_from_file(input_file);
+	e.add_matrix_to_stack(m);
+	cout << "Starting to explore" << endl;
+	e.explore(row, col, false);
 	
 	/*string input_file;
 	string output_file = "";

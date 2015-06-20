@@ -11,12 +11,13 @@ namespace VAN_MAASTRICHT {
 		void explore(bool backup);
 		void explore(unsigned int max_search_depth, bool backup);
 		void explore(unsigned int max_search_depth, string out_file, bool backup);
+		void explore(unsigned int row, unsigned int col, bool backup);
 		void save_stack(string str);
 		void save_stack_intermediate(string str);
 		void save_stack(string str, stack<Matrix> s);
 		void read_stack(string str);
 		void generate_children(Matrix &m);
-		
+
 		bool continue_heuristics();
 		bool degree_sat();
 		void check_valid(Matrix &m);

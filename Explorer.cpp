@@ -118,30 +118,61 @@ namespace VAN_MAASTRICHT {
 		return t1 - t2;
 	}
 
+	void Explorer::explore(unsigned int row, unsigned int col, bool backup) {
+		Matrix matrix;
+		unsigned long nodes_searched = 0;
+		unsigned int max_stack_size = 0;
+		unsigned int current_row = 0;
+		unsigned int current_col = 0;
+		while(!dfs_stack.empty()) {
+			if(dfs_stack.size() > max_stack_size) {
+				max_stack_size = dfs_stack.size();
+			}
+			matrix = dfs_stack.top();
+			dfs_stack.pop();
+
+			current_row = matrix.get_mask_row_first_one();
+			current_col = __builtin_clz(matrix.get_mask_row(current_row));
+			
+			if(current_row > row || (current_row >= row && current_col >= col) || matrix.count_ones_mask() == 0) {
+			}
+			else {
+				generate_children(matrix);
+			}
+			nodes_searched++;
+			if(nodes_searched % 1000000 == 0) {
+				cout << "Nodes searched: " << nodes_searched << "; Max stack size: " << dfs_stack.size() << endl;
+				return;
+			}
+		}
+
+		cout << "Nodes searched: " << nodes_searched << "; Max stack size: " << max_stack_size << endl;
+	}
+
 	void Explorer::explore(bool backup) {
 		Matrix matrix;
 		unsigned long nodes_searched = 0;
 		int hour = 1;
 		unsigned int max_stack_size = 0;
 		while(number_of_solutions == 0 && !dfs_stack.empty()) { // Currently terminates when a single solution found. Solution incrementation commented below.
-			if(dfs_stack.size() > max_stack_size) {
-				max_stack_size = dfs_stack.size();
+			for(unsigned int i = 0; i < 10000000 && !dfs_stack.empty(); i++) {
+				if(dfs_stack.size() > max_stack_size) {
+					max_stack_size = dfs_stack.size();
+				}
+				matrix = dfs_stack.top();
+				dfs_stack.pop();
+				if(matrix.count_ones_mask() == 0) {
+					// currently just checking to see if we're at a point where we can't add any edges. Will check number of edges later
+					// ** WARNING: commented out incrementation of solution count (see above) **
+					// number_of_solutions++;
+					// cout << matrix << endl;
+				}
+				else {
+					generate_children(matrix);
+				}
+				nodes_searched++;
 			}
-			matrix = dfs_stack.top();
-			dfs_stack.pop();
-			if(matrix.count_ones_mask() == 0) {
-				// currently just checking to see if we're at a point where we can't add any edges. Will check number of edges later
-				// ** WARNING: commented out incrementation of solution count (see above) **
-				// number_of_solutions++;
-				// cout << matrix << endl;
-			}
-			else {
-				generate_children(matrix);
-			}
-			nodes_searched++;
-			if(nodes_searched % 10000000 == 0) {
-				cout << "nodes searched: " << nodes_searched << "; Stack size: " << dfs_stack.size() << endl;
-			}
+			cout << "nodes searched: " << nodes_searched << "; Stack size: " << dfs_stack.size() << endl;
 			/*if(backup && nodes_searched % 50000000 == 0) {
 				cout << "Nodes searched (possible overflow): " << nodes_searched << endl;
 				if((hour > 0) && (hour * 3600) < get_current_time()) {
@@ -260,22 +291,18 @@ namespace VAN_MAASTRICHT {
 		
 		// left child
 		bool err = false;
-		// if(!(edgecount + m.count_ones_mask() < MINEDGES)) {
-		// 	// this check only makes sense if we've at the last edge of a row
-		// 	// THOUGHT: Would it make sense to do m.get_degree(row) + __builtin_popcount(m.get_mask_row(row)) < MINDEGREE?
-		// }
-		// else {
-		// 	err = true;
-		// }
 
-		if(((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE))) {
-			err = true;
-		}
+		err |= (edgecount + m.count_ones_mask() < MINEDGES);
+		
+		err |= (edgecount + m.count_ones_mask() < MINEDGES);
 
+		//err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE));
+		err |= (m.get_degree(row) + __builtin_popcount(m.get_mask_row(row)) < MINDEGREE);
+	
 		if(!err) {
 			// calculating the mask for the left child isn't necessary, just removing the entry in the mask we're working on
 			// cout << "LEFT" << endl;
-			// pretty_print(m);
+			//pretty_print(m);
 			dfs_stack.push(m);
 		}
 
@@ -287,13 +314,14 @@ namespace VAN_MAASTRICHT {
 
 		err |= (edgecount > MAXEDGES);
 
-		// err |= (edgecount + m.count_ones_mask() < MINEDGES);
+		err |= (edgecount + m.count_ones_mask() < MINEDGES);
 
 		err |= (m.get_degree(row) > MAXDEGREE);
 		err |= (m.get_degree(col) > MAXDEGREE);
 
 		// Same thought as for the left child
-		err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE));
+		//err |= ((col == VERTEXCOUNT - 1) && (m.get_degree(row) < MINDEGREE));
+		err |= (m.get_degree(row) + __builtin_popcount(m.get_mask_row(row)) < MINDEGREE);
 
 		if(!err) {
 			m.calculate_mask(row, col);
