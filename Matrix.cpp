@@ -15,14 +15,14 @@ namespace VAN_MAASTRICHT {
 		const unsigned int VERTEX_ONE_BIT = 1 << (size - 1);
 
 		for(unsigned int i = 0; i < size; i++) {
-		// 	if((i != j) && (((N >> j) & mat[i]) == 0) && __builtin_popcount(mat[i] & mat[j]) > 1) {
-		// 		return true;
-		// 	}
-			if( i == j ) continue;
+		 	if((i != j) && (((N >> j) & mat[i]) == 0) && __builtin_popcount(mat[i] & mat[j]) > 1) {
+		 		return true;
+		}
+			/*if( i == j ) continue;
 			const unsigned int V = mat[ j ];
 			const unsigned int W = mat[ i ];
 
-			if( (((VERTEX_ONE_BIT >> i) & V) == 0) && (__builtin_popcount(W & V) > 1) ) return true;
+			if( (((VERTEX_ONE_BIT >> i) & V) == 0) && (__builtin_popcount(W & V) > 1) ) return true;*/
 		}
 		return false;
 	}
