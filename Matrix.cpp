@@ -28,16 +28,19 @@ namespace VAN_MAASTRICHT {
 	}
 
 	// i,j is the last edge added
-	bool Matrix::check_triangles(unsigned int i, unsigned int j) {
+        bool Matrix::check_triangles(unsigned int i, unsigned int j) {
 		if((mat[i] & mat[j]) > 0) {
 			return true;
 		}
 		return false;
+
+		// how is this slower?
+		//return ((mat[i] & mat[j]));
 	}
 
 	// set the i,j entry
 	void Matrix::set_entry(uint32_t i, uint32_t j) {
-		if(i < 0 || i >= size || j < 0 || j >= size) {
+		if(i >= size || j >= size) {
 			return;
 		}
 		mat[i] |= (1 << (size - j - 1));
@@ -170,7 +173,7 @@ namespace VAN_MAASTRICHT {
 
 	// get the ith row
 	const uint32_t Matrix::get_row(unsigned int i) const {
-		if(i >= size || i < 0) {
+		if(i >= size) {
 			return -1;
 		}
 		return mat[i];
@@ -183,7 +186,7 @@ namespace VAN_MAASTRICHT {
 
 	// get the ith row of the mask
 	const uint32_t Matrix::get_mask_row(unsigned int i) const {
-		if(i >= size || i < 0) {
+		if(i >= size) {
 			return -1;
 		}
 		return mask[i];
@@ -191,7 +194,7 @@ namespace VAN_MAASTRICHT {
 
 	// get the ith row of the mask
 	uint32_t Matrix::get_mask_row(unsigned int i) {
-		if(i >= size || i < 0) {
+		if(i >= size) {
 			return -1;
 		}
 		return mask[i];
@@ -209,7 +212,7 @@ namespace VAN_MAASTRICHT {
 
 	// get the degree of vertex i
 	unsigned int Matrix::get_degree(unsigned int i) {
-		if(i < 0 || i >= size) {
+		if(i >= size) {
 			return -1;
 		}
 		return __builtin_popcount(mat[i]);
