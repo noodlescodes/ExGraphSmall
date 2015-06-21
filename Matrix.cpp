@@ -66,7 +66,7 @@ namespace VAN_MAASTRICHT {
 	}
 
 	void Matrix::mask_set_row(unsigned int i, uint32_t j) {
-		if(i < 0 || i >= size) {
+		if(i >= size) {
 			return;
 		}
 		mask[i] = j;
