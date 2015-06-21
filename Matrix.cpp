@@ -54,7 +54,7 @@ namespace VAN_MAASTRICHT {
 	
 	// set the ith row to the uint32_t j
 	void Matrix::set_row(unsigned int i, uint32_t j) {
-		if(i < 0 || i >= size) {
+		if(i >= size) {
 			return;
 		}
 		mat[i] = j;
