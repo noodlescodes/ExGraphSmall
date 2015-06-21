@@ -279,13 +279,16 @@ namespace VAN_MAASTRICHT {
 		unsigned int row = 0;
 		unsigned int col = 0;
 		// find first edge we can add, made generally, can make it specific later
-		for(unsigned int i = 0; i < VERTEXCOUNT; i++) {
+		/*for(unsigned int i = 0; i < VERTEXCOUNT; i++) {
 			if(m.get_mask_row(i) > 0) {
 				row = i;
 				col = __builtin_clz(m.get_mask_row(i));
 				break;
 			}
-		}
+		}*/
+
+		row = m.get_mask_row_first_one();
+		col = __builtin_clz(m.get_mask_row(row));
 
 		m.mask_remove_entry(row, col);
 		
