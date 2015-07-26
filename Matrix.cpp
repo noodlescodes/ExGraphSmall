@@ -12,17 +12,11 @@ namespace VAN_MAASTRICHT {
 	
 	// j is the column of the last edge added.
 	bool Matrix::check_squares(unsigned int j) {
-		const unsigned int VERTEX_ONE_BIT = 1 << (size - 1);
 
 		for(unsigned int i = 0; i < size; i++) {
 		 	if((i != j) && (((N >> j) & mat[i]) == 0) && __builtin_popcount(mat[i] & mat[j]) > 1) {
 		 		return true;
-		}
-			/*if( i == j ) continue;
-			const unsigned int V = mat[ j ];
-			const unsigned int W = mat[ i ];
-
-			if( (((VERTEX_ONE_BIT >> i) & V) == 0) && (__builtin_popcount(W & V) > 1) ) return true;*/
+			}
 		}
 		return false;
 	}
@@ -81,7 +75,6 @@ namespace VAN_MAASTRICHT {
 		return (mask[i] & (N >> j)) >> (size - j - 1);
 	}
 
-	// deprecated
 	uint32_t Matrix::get_depth() {
 		return (mat[0] & DEPTH_MASK);
 	}

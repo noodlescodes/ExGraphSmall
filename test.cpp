@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <sstream>
 #include <cstdlib>
+#include <vector>
+#include <thread>
 #include "Matrix.h"
 #include "Explorer.h"
 #include "Converter.h"
@@ -74,186 +76,52 @@ Matrix read_from_file(string str) {
 }
 
 int main(int argc, char* argv[]) {
-	Matrix m = read_from_file("base.txt");
-	
-	unsigned int tmp = 16;
-	for(unsigned int i = tmp; i < 32; i++) {
-		for(unsigned int j = i; j < 32; j++) {
-			if(m.get_mask_entry(i, j) == 1) {
-				m.mask_remove_entry(i, j);
-			}
-		}
-	}
-	for(unsigned int j = 32; j < 32; j++) { 
-		if(m.get_mask_entry(tmp - 1, j) == 1) {
-			m.mask_remove_entry(tmp - 1, j);
-		}
-	}
-	
-	cout << m << endl;
-
-	cout << "    ";
-	for(unsigned int i = 0; i < 32; i++) {
-		cout << i % 10;
-	}
-	cout << "   ";
-	for(unsigned int i = 0; i < 32; i++) {
-		cout << i % 10;
-	}
-	cout << endl << endl;
-	for(unsigned int i = 0; i < 32; i++) {
-		if(i < 10) {
-			cout << i << "   " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
-		}
-		else {
-			cout << i << "  " << bitset<32>(m.get_row(i)) << "   " << bitset<32>(m.get_mask_row(i)) << endl;
-		}
-	}
-	cout << endl << "Num ones: " << m.count_ones_mask() << endl;
-
-	Explorer e = Explorer();
-	e.add_matrix_to_stack(m);
-	e.explore(false);
-
-	/*string input_file;
-	unsigned int max_search_depth = 0;
-	unsigned int row = 0;
-	unsigned int col = 0;
-	bool row_col_specified = false;
+	unsigned int num_threads = 1;
+	unsigned int search_depth = 30;
+	string base_file = "base.txt";
+        
 	if(argc < 3) {
-		cout << "Need input -i <file>" << endl;
 		cout << "Optional switches:" << endl;
-		cout << "-c <number> for comparison depth" << endl;
-		cout << "-d <number> for new depth" << endl;
-		cout << "-m <number> for the row to search to. Needs -n flag as well" << endl;
-		cout << "-n <number> for the column to search to. Needs -m flag as well" << endl;
-		return 0;
+		cout << "Need input -i <file> (default base.txt)" << endl;
+		cout << "-t <number> for number of threads (default 1)" << endl;
+		cout << "-d <number> for search depth in tree (default 30)" << endl;
 	}
-
-	for(int i = 1; i < argc; i+= 2) {
-		if(i + 1 != argc) {
-			if(string(argv[i]) == "-c") {
-				max_search_depth = atoi(argv[i + 1]);
-				cout << "Max search depth: " << max_search_depth << endl;
-				row = 10;
-				col = 15;
-				for(unsigned int i = max_search_depth, K = 17; K > 0; i -= 5 * K, K-= 5, row += 5, col += 5) {
-					if(i < 5 * K) {
-						row += i / K;
-						col += (i % K);
-						break;
-					}
-				}
-				if(col > 31) {
-					col = 31;
-				}
-				cout << "Row: " << row << endl;
-				cout << "Col: " << col << endl;
-			}
-			else if(string(argv[i]) == "-d") {
-				max_search_depth = atoi(argv[i + 1]);
-				cout << "Max search depth: " << max_search_depth << endl;
-			}
-			else if(string(argv[i]) == "-i") {
-				input_file = argv[i + 1];
-				cout << input_file << endl;
-			}
-			else if(string(argv[i]) == "-m") {
-				row = atoi(argv[i + 1]);
-				row_col_specified = !row_col_specified;
-			}
-			else if(string(argv[i]) == "-n") {
-				col = atoi(argv[i + 1]);
-				row_col_specified = !row_col_specified;
-			}
-		}
-	}
-
-	if(row_col_specified) {
-		cout << "If using -m or -n make sure you use the other" << endl;
-		return 0;
-	}
-
-	cout << row << endl;
-	cout << col << endl;
-	//return 0;
-
-	Explorer e = Explorer();
-	cout << "Reading from base.txt." << endl;
-	Matrix m = read_from_file(input_file);
-	e.add_matrix_to_stack(m);
-	cout << "Starting to explore" << endl;
-	e.explore(row, col, false);*/
-	
-	/*string input_file;
-	string output_file = "";
-	unsigned int max_search_depth = 0;
-	bool save_to_file = false;
-
-	if(argc < 3) {
-		cout << "Need input (-i) <file>" << endl;
-		cout << "Optional switches:" << endl;
-		cout << " * -d <number> for depth" << endl;
-		cout << " * -o <file> for output file" << endl;
-		cout << " * -s <true/false> to make a backup of the main stack every hour" << endl;
-		return 0;
-	}
-
 	for(int i = 1; i < argc; i += 2) {
 		if(i + 1 != argc) {
 			if(string(argv[i]) == "-d") {
-				max_search_depth = atoi(argv[i + 1]);
-				cout << "search depth: " << max_search_depth << endl;
+				search_depth = atoi(argv[i + 1]);
+				cout << "Search depth: " << search_depth << endl;
 			}
 			else if(string(argv[i]) == "-i") {
-				input_file = argv[i + 1];
-				cout << "input file: " << input_file << endl;
+				base_file = argv[i + 1];
+				cout << "Base file: " << base_file << endl;
 			}
-			else if(string(argv[i]) == "-o") {
-				output_file = argv[i + 1];
-				cout << "output file: " << output_file << endl;
-			}
-			else if(string(argv[i]) == "-s") {
-				if(string(argv[i + 1]) == "true") {
-					save_to_file = true;
-				}
-				if(save_to_file) {
-					cout << "Save to file: true" << endl;
-				}
-				else {
-					cout << "Save to file: false" << endl;
-				}
+			else if(string(argv[i]) == "-t") {
+				num_threads = atoi(argv[i + 1]);
+				cout << "Number of threads: " << num_threads << endl;
 			}
 		}
 	}
 
-	cout << endl;
-	
-	Explorer e = Explorer();
-	cout << "Reading from base.txt." << endl;
-	e.read_stack(input_file);
-	cout << "Starting to explore." << endl;
-	if(max_search_depth > 0) {
-		if(output_file.length() > 0) {
-			e.explore(max_search_depth, output_file, save_to_file);
-		}
-		else {
-			e.explore(max_search_depth, save_to_file);
-		}
+	Matrix m = read_from_file(base_file);
+	Explorer e = Explorer(num_threads);
+	e.breadth_first_search(m, 40 * num_threads);
+	e.transfer_queue_to_stack();
+
+	vector<thread> threads;
+
+	//for(unsigned int i = 1; i <= 3; i++) {
+	//	threads.push_back(thread(&Explorer::sub_stack_get_data, &e, i, 10));
+	//}
+
+	for(unsigned int i = 1; i <= num_threads; i++) {
+		threads.push_back(thread(&Explorer::depth_first_search, &e, i, search_depth));
 	}
-	else {
-		e.explore(save_to_file);
+	for(unsigned int i = 0; i < threads.size(); i++) {
+		threads[i].join();
 	}
 
-	if(output_file.length() > 0 && max_search_depth == 0) {
-		cout << "Saving the stack." << endl;
-		e.save_stack(output_file);
-		}*/
-
-	//Converter c = Converter();
-	//cout << "Converting the output file." << endl;
-	//c.bin_to_dec("d56_stack.txt", "d56_stack_dec.txt");
-	//cout << "Fin" << endl;
+	cout << "done" << endl;
 
 	/*Matrix m = Matrix();
 	m.set_row(0,130023424);

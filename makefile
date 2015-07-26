@@ -2,7 +2,7 @@ SOURCES=test.cpp Explorer.cpp Matrix.cpp Converter.cpp
 EXECUTABLE=test
 CC=g++
 CFLAGS=-Wall -std=c++11 -O2
-LDFLAGS=
+LDFLAGS=-pthread
 OBJECTS=$(SOURCES:.cpp=.o)
 
 all:$(SOURCES) $(EXECUTABLE)

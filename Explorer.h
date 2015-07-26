@@ -1,43 +1,38 @@
 #include <cstdlib>
 #include <stack>
-#include <ctime>
+#include <queue>
+#include <vector>
+#include <mutex>
 #include "Matrix.h"
 
 namespace VAN_MAASTRICHT {
 	class Explorer {
 	public:
-		Explorer();
+		Explorer(unsigned int number_of_threads = 1);
 
-		void explore(bool backup);
-		void explore(unsigned int max_search_depth, bool backup);
-		void explore(unsigned int max_search_depth, string out_file, bool backup);
-		void explore(unsigned int row, unsigned int col, bool backup);
-		void save_stack(string str);
-		void save_stack_intermediate(string str);
-		void save_stack(string str, stack<Matrix> s);
-		void read_stack(string str);
-		void generate_children(Matrix &m);
+		// Functions related to explorering the tree
+		void breadth_first_search(Matrix &m, unsigned int min_stack_size);
+		void depth_first_search(unsigned int thread_id, unsigned int max_depth);
+		void generate_children_queue(Matrix &m);
+		void generate_children_stack(Matrix &m, unsigned int thread_id);
 
-		bool continue_heuristics();
-		bool degree_sat();
-		void check_valid(Matrix &m);
-		bool triangles_exist();
-		bool squares_exist();
-
+		// stack manipulation functions
 		void add_matrix_to_stack(Matrix &m);
-
+		void transfer_queue_to_stack();
+		void sub_stack_get_data(unsigned int thread_id, unsigned int number_of_elements);
+		
+		// IO functions
 		void pretty_print(Matrix &m);
 
-		time_t get_current_time(); // returns current time since midnight
+		// never need to copy and if I don't have a copy constructor the mutex chucks a fit.
+		// yes, this is bad practise and will come back to bite me.
+		// Sorry future Nathan
+		Explorer(const Explorer&) {}
 
 	private:
-		unsigned int max_edges_found = 0;
-		unsigned int min_edges_allowed = 87;
-		unsigned int max_edges_allowed = 89;
-		unsigned int number_of_solutions = 0;
-		unsigned int max_depth = 190;
-		unsigned int max_degree = 5;
-		unsigned int min_degree = 3;
-		stack<Matrix> dfs_stack;
+		vector<stack<Matrix> > stacks;
+		queue<Matrix> initial_queue; // this is a global variable so it doesn't need to be passed around functions
+		mutex mtx;
+		unsigned int number_of_solutions;
 	};
 }

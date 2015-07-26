@@ -22,7 +22,7 @@ namespace VAN_MAASTRICHT {
 		void mask_set_row(unsigned int i, uint32_t j);
 		uint32_t get_entry(unsigned int i, unsigned int j);
 		uint32_t get_mask_entry(unsigned int i, unsigned int j);
-		uint32_t get_depth(); // deprecated
+		uint32_t get_depth();
 		uint32_t count_ones_mask();
 		uint32_t get_mask_row_first_one();
 		void calculate_mask_base();
