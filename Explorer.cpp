@@ -61,13 +61,15 @@ namespace VAN_MAASTRICHT {
 		mtx.unlock();
 	}
 
-	void Explorer::breadth_first_search(Matrix &m, unsigned int min_stack_size) {
+	void Explorer::breadth_first_search(Matrix &m, unsigned int min_stack_size, unsigned int max_depth) {
 		Matrix matrix;
 		initial_queue.push(m);
-		while(initial_queue.size() < min_stack_size) {
+		while(initial_queue.size() < min_stack_size && !initial_queue.empty()) {
 			matrix = initial_queue.front();
 			initial_queue.pop();
-			generate_children_queue(matrix);
+			if(matrix.get_depth() < max_depth) {
+				generate_children_queue(matrix);
+			}
 		}
 	}
 

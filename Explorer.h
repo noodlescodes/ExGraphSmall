@@ -11,7 +11,7 @@ namespace VAN_MAASTRICHT {
 		Explorer(unsigned int number_of_threads = 1);
 
 		// Functions related to explorering the tree
-		void breadth_first_search(Matrix &m, unsigned int min_stack_size);
+		void breadth_first_search(Matrix &m, unsigned int min_stack_size, unsigned int max_depth);
 		void depth_first_search(unsigned int thread_id, unsigned int max_depth);
 		void generate_children_queue(Matrix &m);
 		void generate_children_stack(Matrix &m, unsigned int thread_id);

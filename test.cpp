@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 
 	Matrix m = read_from_file(base_file);
 	Explorer e = Explorer(num_threads);
-	e.breadth_first_search(m, 40 * num_threads);
+	e.breadth_first_search(m, 40 * num_threads, search_depth);
 	e.transfer_queue_to_stack();
 
 	vector<thread> threads;
