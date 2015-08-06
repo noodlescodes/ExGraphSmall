@@ -66,6 +66,10 @@ namespace VAN_MAASTRICHT {
 		mask[i] = j;
 	}
 
+	void Matrix::set_number_edges(unsigned int num) {
+		number_of_edges = num;
+	}
+
 	// get the entry at i,j
 	uint32_t Matrix::get_entry(unsigned int i, unsigned int j) {
 		return (mat[i] & (N >> j)) >> (size - j - 1);
@@ -212,11 +216,7 @@ namespace VAN_MAASTRICHT {
 	}
 
 	unsigned int Matrix::get_number_edges() {
-		unsigned int n = 0;
-		for(unsigned int i = 0; i < size; i++) {
-			n += __builtin_popcount(mat[i]);
-		}
-		return n >> 1;
+		return number_of_edges >> 1;
 	}
 	
 	// overloaded output operator. Useful for debugging and writing to file.

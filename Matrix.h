@@ -20,6 +20,7 @@ namespace VAN_MAASTRICHT {
 		void set_row(unsigned int i, uint32_t j);
 		void mask_remove_entry(unsigned int i, unsigned int j);
 		void mask_set_row(unsigned int i, uint32_t j);
+		void set_number_edges(unsigned int num);
 		uint32_t get_entry(unsigned int i, unsigned int j);
 		uint32_t get_mask_entry(unsigned int i, unsigned int j);
 		uint32_t get_depth();
@@ -44,6 +45,7 @@ namespace VAN_MAASTRICHT {
 		static const uint32_t DEPTH_MASK = (~((uint32_t) 0) >> (32 - 22));
 		uint32_t mat[size];
 		uint32_t mask[size];
+		uint32_t number_of_edges = 90; // 2 * total edges in base graph
 	};
 	// overloaded operators
 	ostream& operator <<(ostream& outs, const Matrix& mat);

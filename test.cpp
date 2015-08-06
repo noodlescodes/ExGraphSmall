@@ -81,10 +81,10 @@ int main(int argc, char* argv[]) {
 	string base_file = "base.txt";
         
 	if(argc < 3) {
-		cout << "Optional switches:" << endl;
-		cout << "Need input -i <file> (default base.txt)" << endl;
-		cout << "-t <number> for number of threads (default 1)" << endl;
-		cout << "-d <number> for search depth in tree (default 30)" << endl;
+		//cout << "Optional switches:" << endl;
+		//cout << "Need input -i <file> (default base.txt)" << endl;
+		//cout << "-t <number> for number of threads (default 1)" << endl;
+		//cout << "-d <number> for search depth in tree (default 30)" << endl;
 	}
 	for(int i = 1; i < argc; i += 2) {
 		if(i + 1 != argc) {
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
 			}
 			else if(string(argv[i]) == "-t") {
 				num_threads = atoi(argv[i + 1]);
-				cout << "Number of threads: " << num_threads << endl;
+				//cout << "Number of threads: " << num_threads << endl;
 			}
 		}
 	}
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
 		threads[i].join();
 	}
 
-	cout << "done" << endl;
+	//cout << "done" << endl;
 
 	/*Matrix m = Matrix();
 	m.set_row(0,130023424);

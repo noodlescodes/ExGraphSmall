@@ -48,7 +48,7 @@ namespace VAN_MAASTRICHT {
 
 	void Explorer::sub_stack_get_data(unsigned int thread_id, unsigned int number_of_elements) {
 		mtx.lock();
-		cout << "Thread " << thread_id << " getting data" << endl;
+		//cout << "Thread " << thread_id << " getting data" << endl;
 		while(!stacks[0].empty() && stacks[thread_id].size() < number_of_elements) {
 			stacks[thread_id].push(stacks[0].top());
 			stacks[0].pop();
@@ -57,7 +57,8 @@ namespace VAN_MAASTRICHT {
 		//for(unsigned int i = 0; i < stacks.size(); i++) {
 		//	cout << "Stack[" << i << "] size: " << stacks[i].size() << endl;
 		//}
-		cout << "stacks[0] size: " << stacks[0].size() << endl;
+		//cout << "stacks[0] size: " << stacks[0].size() << endl;
+		//cout << "Stack[" << thread_id << "] size: " << stacks[thread_id].size() << endl;
 		mtx.unlock();
 	}
 
@@ -97,10 +98,9 @@ namespace VAN_MAASTRICHT {
 				nodes_searched++;
 			}
 			sub_stack_get_data(thread_id, 10);
-			cout << "Stack[" << thread_id << "] size: " << stacks[thread_id].size() << endl;
 		}
 		
-		cout << "Nodes searched by thread " << thread_id << ": " << nodes_searched << endl;
+		//cout << "Nodes searched by thread " << thread_id << ": " << nodes_searched << endl;
 	}
 
         void Explorer::generate_children_queue(Matrix &m) {
@@ -136,6 +136,7 @@ namespace VAN_MAASTRICHT {
 		m.set_row(0, m.get_row(0) - depth);
 
 		m.set_entry(row, col);
+		m.set_number_edges((edgecount << 1) + 2);
 		++edgecount;
 
 		err |= (edgecount > MAXEDGES);
@@ -187,6 +188,7 @@ namespace VAN_MAASTRICHT {
 		m.set_row(0, m.get_row(0) - depth);
 
 		m.set_entry(row, col);
+		m.set_number_edges((edgecount << 1) + 2);
 		++edgecount;
 
 		err |= (edgecount > MAXEDGES);
