@@ -1,8 +1,5 @@
 #!/bin/bash
 
-MIN=20
-MAX=21
-
 for i in `seq $1 $2`;
 do
     echo Depth $i >> timing.log
