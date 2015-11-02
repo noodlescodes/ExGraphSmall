@@ -72,6 +72,8 @@ Matrix read_from_file(string str) {
 		}
 	}
 
+	cout << "TESTING: " << m << endl;
+
 	return m;
 }
 

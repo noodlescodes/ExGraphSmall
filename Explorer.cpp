@@ -100,14 +100,16 @@ namespace VAN_MAASTRICHT {
 			sub_stack_get_data(thread_id, 10);
 		}
 		
-		//cout << "Nodes searched by thread " << thread_id << ": " << nodes_searched << endl;
+		// cout << "Nodes searched by thread " << thread_id << ": " << nodes_searched << endl;
 	}
 
         void Explorer::generate_children_queue(Matrix &m) {
-		const unsigned int MINEDGES = 82;
-		const unsigned int MAXEDGES = 84;
-		const unsigned int MINDEGREE = 3;
-		const unsigned int MAXDEGREE = 5;
+		const unsigned int MINEDGES = /*9; */82;
+		const unsigned int MAXEDGES = /*45;*/84;
+		const unsigned int MINDEGREE = /*1; */3;
+		const unsigned int MAXDEGREE = /*9; */5;
+
+		cout << "TESTING" << endl;
 
 		unsigned int depth = m.get_depth();
 		m.set_row(0, m.get_row(0) - depth);
@@ -160,6 +162,8 @@ namespace VAN_MAASTRICHT {
 		const unsigned int MAXEDGES = 84;
 		const unsigned int MINDEGREE = 3;
 		const unsigned int MAXDEGREE = 5;
+
+		cout << "*********" << endl;
 
 		unsigned int depth = m.get_depth();
 		m.set_row(0, m.get_row(0) - depth);
