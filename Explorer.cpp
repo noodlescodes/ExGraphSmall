@@ -175,6 +175,21 @@ namespace VAN_MAASTRICHT {
 			m.calculate_mask(row, col);
 			m.set_row(0, m.get_row(0) + depth);
 			initial_queue.push(m);
+
+			// Check to see if we've found a grpah with more edges than previously found.
+			if( m.get_number_edges() > MINEDGES ) {
+				solnMtx.lock();
+				// Check again, just in case another thread beat us to the punch.
+				if( m.get_number_edges() > MINEDGES ) {
+					cout << "New minimum: " << m.get_number_edges() << " edges." << endl;
+					// Update the minimum edges for the rest of the search.
+					MINEDGES = m.get_number_edges();
+					// Clear the solutions queue.
+					queue<Matrix> empty;
+					swap(initial_queue, empty);
+				}
+				solnMtx.unlock();
+			}
 		}
 	}
 
@@ -220,9 +235,24 @@ namespace VAN_MAASTRICHT {
 		err |= (m.get_degree(row) + __builtin_popcount(m.get_mask_row(row)) < MINDEGREE);
 
 		if(!err) {
-			m.calculate_mask(row, col);
+			m.calculate_mask(row, col); 
 			m.set_row(0, m.get_row(0) + depth);
 			stacks[thread_id].push(m);
+
+			// Check to see if we've found a grpah with more edges than previously found.
+			if( m.get_number_edges() > MINEDGES ) {
+				solnMtx.lock();
+				// Check again, just in case somebody beat us to the punch.
+				if( m.get_number_edges() > MINEDGES ) {
+					cout << "New minimum: " << m.get_number_edges() << " edges." << endl;
+					// Update the minimum edges for the rest of the search.
+					MINEDGES = m.get_number_edges();
+					// Clear the solutions queue.
+					queue<Matrix> empty;
+					swap(initial_queue, empty);
+				}
+				solnMtx.unlock();
+			}
 		}
 	}
 }
