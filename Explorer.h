@@ -8,7 +8,7 @@
 namespace VAN_MAASTRICHT {
 	class Explorer {
 	public:
-		Explorer(unsigned int number_of_threads = 1);
+		Explorer(unsigned int minEdges, unsigned int maxEdges, unsigned int minDegree, unsigned int maxDegree, unsigned int number_of_threads = 1);
 
 		// Functions related to explorering the tree
 		void breadth_first_search(Matrix &m, unsigned int min_stack_size, unsigned int max_depth);
@@ -24,15 +24,25 @@ namespace VAN_MAASTRICHT {
 		// IO functions
 		void pretty_print(Matrix &m);
 
+		// Solution Return
+		queue<Matrix> solutions( ) { return initial_queue; }
+
 		// never need to copy and if I don't have a copy constructor the mutex chucks a fit.
-		// yes, this is bad practise and will come back to bite me.
+		// yes, this is bad practise and will come back to bite me.f
 		// Sorry future Nathan
-		Explorer(const Explorer&) {}
+		Explorer(const Explorer& e)
+			: MINEDGES( e.MINEDGES ), MAXEDGES( e.MAXEDGES ), MINDEGREE( e.MINDEGREE ), MAXDEGREE( e.MAXDEGREE ) {}
 
 	private:
 		vector<stack<Matrix> > stacks;
 		queue<Matrix> initial_queue; // this is a global variable so it doesn't need to be passed around functions
-		mutex mtx;
+		mutex mtx, solnMtx;
 		unsigned int number_of_solutions;
+
+		unsigned int MINEDGES;
+		const unsigned int MAXEDGES;
+		const unsigned int MINDEGREE;
+		const unsigned int MAXDEGREE;
+
 	};
 }

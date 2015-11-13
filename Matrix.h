@@ -38,6 +38,7 @@ namespace VAN_MAASTRICHT {
 
 		unsigned int get_degree(unsigned int i);
 		unsigned int get_number_edges();
+		void calculate_number_edges();
 
 	private:
 		static const unsigned int size = 32;
@@ -45,7 +46,7 @@ namespace VAN_MAASTRICHT {
 		static const uint32_t DEPTH_MASK = (~((uint32_t) 0) >> (32 - 22));
 		uint32_t mat[size];
 		uint32_t mask[size];
-		uint32_t number_of_edges = 90; // 2 * total edges in base graph
+		uint32_t number_of_edges; // 2 * total edges in base graph
 	};
 	// overloaded operators
 	ostream& operator <<(ostream& outs, const Matrix& mat);

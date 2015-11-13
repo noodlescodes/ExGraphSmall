@@ -218,6 +218,16 @@ namespace VAN_MAASTRICHT {
 	unsigned int Matrix::get_number_edges() {
 		return number_of_edges >> 1;
 	}
+
+	void Matrix::calculate_number_edges() {
+		// Reset number of edges.
+		number_of_edges = 0;
+
+		// Count edges in the matrix.
+		for( int i = 0; i < size; ++i ) {
+			number_of_edges += __builtin_popcount(mat[i]);
+		}
+	}
 	
 	// overloaded output operator. Useful for debugging and writing to file.
 	ostream& operator <<(ostream& outs, const Matrix& mat) {

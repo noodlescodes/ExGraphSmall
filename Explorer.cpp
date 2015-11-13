@@ -8,7 +8,9 @@
 using namespace std;
 
 namespace VAN_MAASTRICHT {
-	Explorer::Explorer(unsigned int number_of_threads) {
+	Explorer::Explorer(unsigned int minEdges, unsigned int maxEdges, unsigned int minDegree, unsigned int maxDegree, unsigned int number_of_threads) 
+		: MINEDGES( minEdges ), MAXEDGES( maxEdges ), MINDEGREE( minDegree ), MAXDEGREE( maxDegree )
+	{
 		// stacks[0] is the main stack, every stack
 		// after that is a thread stack
 		stacks.resize(1 + number_of_threads);
@@ -87,7 +89,31 @@ namespace VAN_MAASTRICHT {
 				matrix = stacks[thread_id].top();
 				stacks[thread_id].pop();
 				if(matrix.count_ones_mask() == 0) {
-					// this is a solution
+					// this is a solution (but not necessarily maximal)
+
+					// Use the mutex to make sure we are the only process updating the solutions queue, and that no other process is updating MINEDGES.
+					solnMtx.lock();
+
+					// First, make sure we want to keep this solution. 
+					if( matrix.get_number_edges() < MINEDGES ) { solnMtx.unlock(); continue; }
+
+					// First, make sure we haven't found a new, better solution. This *should* be impossible, but the code is left here to be sure.
+					if( matrix.get_number_edges() > MINEDGES ) {
+						// We have found a better solution than the current crop.
+						cout << "New Solution with " << matrix.get_number_edges() << " edges" << endl;
+						// Update the minimum edges for the rest of the search.
+						MINEDGES = matrix.get_number_edges();
+						// Clear the queue to put in our new best solutions.
+						queue<Matrix> empty;
+						swap(initial_queue, empty);
+					}
+
+					// Put the solution into the initial_queue.
+					matrix.set_row(0, matrix.get_row(0) - matrix.get_depth());
+					initial_queue.push( matrix );
+
+					// Unlock the mutex.
+					solnMtx.unlock();
 				}
 				else if(matrix.get_depth() == max_depth) {
 					// do nothing
@@ -103,15 +129,10 @@ namespace VAN_MAASTRICHT {
 		// cout << "Nodes searched by thread " << thread_id << ": " << nodes_searched << endl;
 	}
 
-        void Explorer::generate_children_queue(Matrix &m) {
-		const unsigned int MINEDGES = /*9; */82;
-		const unsigned int MAXEDGES = /*45;*/84;
-		const unsigned int MINDEGREE = /*1; */3;
-		const unsigned int MAXDEGREE = /*9; */5;
-
-		cout << "TESTING" << endl;
+    void Explorer::generate_children_queue(Matrix &m) {
 
 		unsigned int depth = m.get_depth();
+
 		m.set_row(0, m.get_row(0) - depth);
 		depth++;
 
@@ -143,7 +164,7 @@ namespace VAN_MAASTRICHT {
 
 		err |= (edgecount > MAXEDGES);
 
-		err |= (edgecount + m.count_ones_mask() < MINEDGES);
+		err |= (edgecount + m.count_ones_mask() < MINEDGES); // SHOULD THIS BE edgecount + m.count_ones_mask() - 1 ?? (Since the mask appears not to have been modified).
 
 		err |= (m.get_degree(row) > MAXDEGREE);
 		err |= (m.get_degree(col) > MAXDEGREE);
@@ -158,13 +179,7 @@ namespace VAN_MAASTRICHT {
 	}
 
 	void Explorer::generate_children_stack(Matrix &m, unsigned int thread_id) {
-		const unsigned int MINEDGES = 82;
-		const unsigned int MAXEDGES = 84;
-		const unsigned int MINDEGREE = 3;
-		const unsigned int MAXDEGREE = 5;
-
-		cout << "*********" << endl;
-
+		
 		unsigned int depth = m.get_depth();
 		m.set_row(0, m.get_row(0) - depth);
 		depth++;
@@ -197,7 +212,7 @@ namespace VAN_MAASTRICHT {
 
 		err |= (edgecount > MAXEDGES);
 
-		err |= (edgecount + m.count_ones_mask() < MINEDGES);
+		err |= (edgecount + m.count_ones_mask() < MINEDGES); // SHOULD THIS BE edgecount + m.count_ones_mask() - 1 ?? (Since the mask appears not to have been modified).
 
 		err |= (m.get_degree(row) > MAXDEGREE);
 		err |= (m.get_degree(col) > MAXDEGREE);

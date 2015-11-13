@@ -47,34 +47,49 @@ stack<Matrix> stack_from_file(string str) {
 	return dfs_stack;
 }
 
-Matrix read_from_file(string str) {
-	Matrix m = Matrix();
+struct ExplorerParameters {
+	Matrix baseMatrix;
+	unsigned int minEdges, maxEdges, minDegree, maxDegree;
+};
+
+ExplorerParameters read_from_file(string str) {
+	ExplorerParameters ep;
+
 	ifstream f;
 	f.open(str);
 	if(f.is_open()) {
-		string line, mat, mask;
-		getline(f, line);
-		unsigned int pos = line.find("}") + 1;
-		mat  = line.substr(0, pos);
-		mask = line.substr(pos);
-		mat = mat.substr(1, mat.length() - 2);
-		mat.erase(remove(mat.begin(), mat.end(), ' '), mat.end());
+		string matrix, mask;
+
+		// Read the data. Each data element is on a separate line.
+		getline(f, matrix);
+		getline(f, mask);
+		f >> ep.minEdges;
+		f >> ep.maxEdges;
+		f >> ep.minDegree;
+		f >> ep.maxDegree;
+
+		// Strip opening '{' and closing '}' characters from the matrix and the mask.
+		matrix = matrix.substr(1, matrix.length() - 2);
+		matrix.erase(remove(matrix.begin(), matrix.end(), ' '), matrix.end());
+
 		mask = mask.substr(1, mask.length() - 2);
 		mask.erase(remove(mask.begin(), mask.end(), ' '), mask.end());
-		stringstream mat_stream(mat);
+
+		// Read the matrix and mask into a Matrix object.
+		stringstream matrix_stream(matrix);
 		stringstream mask_stream(mask);
 		string num;
 		for(unsigned int i = 0; i < 32; i++) {
-			getline(mat_stream, num, ',');
-			m.set_row(i, atoi(num.c_str()));
+			getline(matrix_stream, num, ',');
+			ep.baseMatrix.set_row(i, atoi(num.c_str()));
 			getline(mask_stream, num, ',');
-			m.mask_set_row(i, atoi(num.c_str()));
+			ep.baseMatrix.mask_set_row(i, atoi(num.c_str()));
 		}
+
+		ep.baseMatrix.calculate_number_edges();
 	}
 
-	cout << "TESTING: " << m << endl;
-
-	return m;
+	return ep;
 }
 
 int main(int argc, char* argv[]) {
@@ -105,9 +120,17 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	Matrix m = read_from_file(base_file);
-	Explorer e = Explorer(num_threads);
-	e.breadth_first_search(m, 40 * num_threads, search_depth);
+	// Matrix m = read_from_file(base_file);
+	// Explorer e = Explorer(1, 1, 1, 1, num_threads);
+	// e.breadth_first_search(m, 40 * num_threads, search_depth);
+	// e.transfer_queue_to_stack();
+
+	ExplorerParameters ep = read_from_file(base_file);
+
+	Explorer e = Explorer(ep.minEdges, ep.maxEdges, ep.minDegree, ep.maxDegree, num_threads);
+	e.pretty_print( ep.baseMatrix );
+	e.breadth_first_search(ep.baseMatrix, 40 * num_threads, search_depth);
+	cout << "Generated: " << e.solutions().size() << " initial graphs" << endl;
 	e.transfer_queue_to_stack();
 
 	vector<thread> threads;
@@ -161,6 +184,9 @@ int main(int argc, char* argv[]) {
 
 	dfs_stack.push(m);
 	stack_to_file("test.txt", dfs_stack);*/
+
+	cout << "Found: " << e.solutions().size() << " solutions" << endl;
+	e.pretty_print( e.solutions().front() );
 	
 	return 0;
 }
