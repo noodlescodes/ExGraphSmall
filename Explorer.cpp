@@ -173,6 +173,7 @@ namespace VAN_MAASTRICHT {
 
 		if(!err) {
 			m.calculate_mask(row, col);
+
 			m.set_row(0, m.get_row(0) + depth);
 			initial_queue.push(m);
 
@@ -181,7 +182,7 @@ namespace VAN_MAASTRICHT {
 				solnMtx.lock();
 				// Check again, just in case another thread beat us to the punch.
 				if( m.get_number_edges() > MINEDGES ) {
-					cout << "New minimum: " << m.get_number_edges() << " edges." << endl;
+					cout << "(Q) New minimum: " << m.get_number_edges() << " edges." << endl;
 					// Update the minimum edges for the rest of the search.
 					MINEDGES = m.get_number_edges();
 					// Clear the solutions queue.
@@ -194,7 +195,6 @@ namespace VAN_MAASTRICHT {
 	}
 
 	void Explorer::generate_children_stack(Matrix &m, unsigned int thread_id) {
-		
 		unsigned int depth = m.get_depth();
 		m.set_row(0, m.get_row(0) - depth);
 		depth++;
@@ -214,7 +214,14 @@ namespace VAN_MAASTRICHT {
 
 		m.set_row(0, m.get_row(0) + depth);
 		if(!err) {
-			stacks[thread_id].push(m);
+			// if( m.check_connected() ) {
+			// 	m.set_row(0, m.get_row(0) + depth);
+				stacks[thread_id].push(m);
+			// }
+			// else {
+			// 	// mtx.lock(); cout << "(T" << thread_id << ") Pruning disconnected graph" << endl; mtx.unlock();
+			// 	m.set_row(0, m.get_row(0) + depth);
+			// }
 		}
 
 		// right child
@@ -227,7 +234,7 @@ namespace VAN_MAASTRICHT {
 
 		err |= (edgecount > MAXEDGES);
 
-		err |= (edgecount + m.count_ones_mask() < MINEDGES); // SHOULD THIS BE edgecount + m.count_ones_mask() - 1 ?? (Since the mask appears not to have been modified).
+		err |= (edgecount + m.count_ones_mask() < MINEDGES); // This needs to be moved to after the calculate_mask( ) function.
 
 		err |= (m.get_degree(row) > MAXDEGREE);
 		err |= (m.get_degree(col) > MAXDEGREE);
@@ -236,6 +243,8 @@ namespace VAN_MAASTRICHT {
 
 		if(!err) {
 			m.calculate_mask(row, col); 
+
+
 			m.set_row(0, m.get_row(0) + depth);
 			stacks[thread_id].push(m);
 
@@ -244,7 +253,7 @@ namespace VAN_MAASTRICHT {
 				solnMtx.lock();
 				// Check again, just in case somebody beat us to the punch.
 				if( m.get_number_edges() > MINEDGES ) {
-					cout << "New minimum: " << m.get_number_edges() << " edges." << endl;
+					cout << "(T" << thread_id << ") New minimum: " << m.get_number_edges() << " edges." << endl;
 					// Update the minimum edges for the rest of the search.
 					MINEDGES = m.get_number_edges();
 					// Clear the solutions queue.
@@ -255,4 +264,4 @@ namespace VAN_MAASTRICHT {
 			}
 		}
 	}
-}
+} // namespace VAN_MAASTRICHT

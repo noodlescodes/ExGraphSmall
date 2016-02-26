@@ -61,34 +61,13 @@ ExplorerParameters read_from_file(string str) {
 		string matrix, mask;
 
 		// Read the data. Each data element is on a separate line.
-		getline(f, matrix);
-		getline(f, mask);
+		f >> ep.baseMatrix;
 		f >> ep.minEdges;
 		f >> ep.maxEdges;
 		f >> ep.minDegree;
 		f >> ep.maxDegree;
-
-		// Strip opening '{' and closing '}' characters from the matrix and the mask.
-		matrix = matrix.substr(1, matrix.length() - 2);
-		matrix.erase(remove(matrix.begin(), matrix.end(), ' '), matrix.end());
-
-		mask = mask.substr(1, mask.length() - 2);
-		mask.erase(remove(mask.begin(), mask.end(), ' '), mask.end());
-
-		// Read the matrix and mask into a Matrix object.
-		stringstream matrix_stream(matrix);
-		stringstream mask_stream(mask);
-		string num;
-		for(unsigned int i = 0; i < 32; i++) {
-			getline(matrix_stream, num, ',');
-			ep.baseMatrix.set_row(i, atoi(num.c_str()));
-			getline(mask_stream, num, ',');
-			ep.baseMatrix.mask_set_row(i, atoi(num.c_str()));
-		}
-
-		ep.baseMatrix.calculate_number_edges();
 	}
-
+	f.close();
 	return ep;
 }
 

@@ -242,4 +242,44 @@ namespace VAN_MAASTRICHT {
 		outs << mat.get_mask_row(mat.get_size() - 1) << "}";
 		return outs;
 	}
-}
+
+	istream& operator >>(istream& ins, Matrix& mat) {
+		// Formatted input of a Matrix through an input stream;
+		string error( "Error in formatted input of Matrix" );
+
+		char delimiter;
+
+		// Read the Matrix
+		ins >> delimiter;
+		if( delimiter != '{' ) throw error;
+		ins >> mat.mat[0];
+
+		for( unsigned int i = 1; i < mat.get_size(); ++i ) {
+			ins >> delimiter;
+			if( delimiter != ',' ) throw error;
+			ins >> mat.mat[i];
+		}
+
+		ins >> delimiter;
+		if( delimiter != '}' ) throw error;
+
+		// Read the mask
+		ins >> delimiter;
+		if( delimiter != '{' ) throw error;
+		ins >> mat.mask[0];
+
+		for( unsigned int i = 1; i < mat.get_size(); ++i ) {
+			ins >> delimiter;
+			if( delimiter != ',' ) throw error;
+			ins >> mat.mask[i];
+		}
+
+		ins >> delimiter;
+		if( delimiter != '}' ) throw error;
+
+		// Calculate the number of edges in the newly read graph.
+		mat.calculate_number_edges();
+
+		return ins;
+	}
+} // namespace VAN_MAASTRICHT

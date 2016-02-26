@@ -26,6 +26,7 @@ namespace VAN_MAASTRICHT {
 
 		// Solution Return
 		queue<Matrix> solutions( ) { return initial_queue; }
+		unsigned int get_min_edges( ) const { return MINEDGES; }
 
 		// never need to copy and if I don't have a copy constructor the mutex chucks a fit.
 		// yes, this is bad practise and will come back to bite me.f

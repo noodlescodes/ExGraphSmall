@@ -47,8 +47,12 @@ namespace VAN_MAASTRICHT {
 		uint32_t mat[size];
 		uint32_t mask[size];
 		uint32_t number_of_edges; // 2 * total edges in base graph
-	};
+
+		friend istream& operator >>(istream&, Matrix& );
+	}; // class Matrix
+	
 	// overloaded operators
+	// ostream& operator >>(ostream&, const Matrix& );
 	ostream& operator <<(ostream& outs, const Matrix& mat);
 }
 #endif
