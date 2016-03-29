@@ -245,7 +245,7 @@ namespace VAN_MAASTRICHT {
 
 	istream& operator >>(istream& ins, Matrix& mat) {
 		// Formatted input of a Matrix through an input stream;
-		string error( "Error in formatted input of Matrix" );
+		string error( "Error in formatted input of Matrix." );
 
 		char delimiter;
 

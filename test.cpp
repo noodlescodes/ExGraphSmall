@@ -48,7 +48,7 @@ stack<Matrix> stack_from_file(string str) {
 }
 
 struct ExplorerParameters {
-	Matrix baseMatrix;
+	queue<Matrix> baseMatrix;
 	unsigned int minEdges, maxEdges, minDegree, maxDegree;
 };
 
@@ -61,11 +61,22 @@ ExplorerParameters read_from_file(string str) {
 		string matrix, mask;
 
 		// Read the data. Each data element is on a separate line.
-		f >> ep.baseMatrix;
 		f >> ep.minEdges;
 		f >> ep.maxEdges;
 		f >> ep.minDegree;
 		f >> ep.maxDegree;
+		while( f ) {
+			Matrix m;
+			try {
+				f >> m;
+			}
+			catch( string s ) { // We've probably reached EOF, but can't currently detect it properly for the loop.
+				cerr << s << endl;
+				break;
+			}
+			Explorer::pretty_print(m);
+			ep.baseMatrix.push(m);
+		}
 	}
 	f.close();
 	return ep;
@@ -103,11 +114,10 @@ int main(int argc, char* argv[]) {
 	// Explorer e = Explorer(1, 1, 1, 1, num_threads);
 	// e.breadth_first_search(m, 40 * num_threads, search_depth);
 	// e.transfer_queue_to_stack();
-
 	ExplorerParameters ep = read_from_file(base_file);
 
 	Explorer e = Explorer(ep.minEdges, ep.maxEdges, ep.minDegree, ep.maxDegree, num_threads);
-	e.pretty_print( ep.baseMatrix );
+	// e.pretty_print( ep.baseMatrix );
 	e.breadth_first_search(ep.baseMatrix, 40 * num_threads, search_depth);
 	cout << "Generated: " << e.solutions().size() << " initial graphs" << endl;
 	e.transfer_queue_to_stack();
@@ -165,7 +175,7 @@ int main(int argc, char* argv[]) {
 	stack_to_file("test.txt", dfs_stack);*/
 
 	cout << "Found: " << e.solutions().size() << " solutions" << endl;
-	e.pretty_print( e.solutions().front() );
+	if( e.solutions().size() > 0 ) e.pretty_print( e.solutions().front() );
 	
 	return 0;
 }
