@@ -224,7 +224,7 @@ namespace VAN_MAASTRICHT {
 		number_of_edges = 0;
 
 		// Count edges in the matrix.
-		for( int i = 0; i < size; ++i ) {
+		for(unsigned int i = 0; i < size; ++i ) {
 			number_of_edges += __builtin_popcount(mat[i]);
 		}
 	}
